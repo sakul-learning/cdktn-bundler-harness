@@ -1,0 +1,95 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  // Check both unused declared deps AND undeclared-but-imported (unlisted) deps.
+  "include": ["dependencies", "unlisted"],
+  "ignoreWorkspaces": ["examples/**"],
+  "treatConfigHintsAsErrors": true,
+  "workspaces": {
+    ".": {
+      // The loose scripts under tools/ are invoked from package.json/CI, not imported;
+      // list them as entries so knip traces their dependencies
+      "entry": ["tools/*.mjs"],
+      "ignoreDependencies": [
+        // Required by the tools/extract-changelog script (run from tools/release-github.sh).
+        "changelog-parser",
+        // Referenced only via `--format=gha` CLI flag in CI; knip can't detect this.
+        "eslint-formatter-gha"
+      ]
+    },
+    "packages/cdktn": {
+      "project": ["src/**/*.ts", "test/**/*.ts", "scripts/**/*.mjs"]
+    },
+    "packages/cdktn-cli": {
+      "entry": ["src/bin/cdktn.ts", "src/bin/cmds/handlers.ts", "build.ts"],
+      "project": ["src/**/*.ts"],
+      "ignoreDependencies": [
+        // Read at runtime via pkg.dependencies.constructs lookup in
+        // @cdktn/cli-core/src/lib/init.ts (after esbuild bundles, pkg-up
+        // resolves cdktn-cli's package.json — not cli-core's).
+        "constructs",
+        // Not bundled with esbuild
+        // Reference is otherwise lost as cli-core (what actually references it) is bundled.
+        "@cdktn/hcl-tools",
+        // Not bundled with esbuild
+        // Reference is otherwise lost as provider-schema (what actually references it) is bundled.
+        "@cdktn/hcl2json",
+        // Only referenced via build.ts's esbuild `alias` string (punycode -> punycode/),
+        // which knip can't trace to a dependency.
+        "punycode"
+      ]
+    },
+    "packages/@cdktn/cli-core": {
+      "project": ["src/**/*.ts"],
+      "ignoreDependencies": [
+        // Referenced by jest.config.js as prettierPath for snapshot formatting.
+        "prettier"
+      ]
+    },
+    "packages/@cdktn/commons": {
+      "project": ["src/**/*.ts"]
+    },
+    "packages/@cdktn/bundler-nodejs": {
+      "entry": ["runner.mjs"],
+      "project": ["src/**/*.ts", "test/**/*.ts"]
+    },
+    "packages/@cdktn/aws-lambda-nodejs": {
+      "project": ["src/**/*.ts", "test/**/*.ts"]
+    },
+    "packages/@cdktn/hcl-tools": {
+      "project": ["src/**/*.ts"]
+    },
+    "packages/@cdktn/hcl2cdk": {
+      "project": ["src/**/*.ts", "test/**/*.ts"]
+    },
+    "packages/@cdktn/hcl2json": {
+      "project": ["src/**/*.ts", "test/**/*.ts"]
+    },
+    "packages/@cdktn/provider-generator": {
+      "project": ["src/**/*.ts"]
+    },
+    "packages/@cdktn/provider-schema": {
+      "project": ["src/**/*.ts"]
+    },
+    "tools/generate-function-bindings": {
+      "project": ["scripts/**/*.ts"]
+    },
+    "tools/documentation-generation": {
+      "entry": ["generate-documentation.js"],
+      "ignoreDependencies": [
+        // Resolved on disk via assembliesDir (generate-documentation.js), not
+        // statically imported — jsii-docgen needs a local install of cdktn
+        // in node_modules to resolve the .jsii assembly. constructs is a
+        // peerDependency instead, which knip already treats as used.
+        "cdktn"
+      ]
+    },
+    "test": {
+      "entry": ["provider-tests/generate-provider-test.js"],
+      "project": ["**/*.ts"],
+      "ignoreDependencies": [
+        // TODO: triage and add to package.json — each is imported but undeclared.
+        "constructs"
+      ]
+    }
+  }
+}

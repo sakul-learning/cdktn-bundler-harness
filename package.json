@@ -1,0 +1,23 @@
+{
+  "name": "cdktn-bundler-harness",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Ports known real-world bundlers (TerraConstructs local/nodejs/Docker, TerraConstructs PR #165 buildkit idea, PR #402 Rolldown) onto the IAssetBundler extension interface from open-constructs/cdk-terrain PR #442.",
+  "license": "MPL-2.0",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "harness": "tsx src/run.ts",
+    "harness:all": "tsx src/run.ts --allow-docker --allow-buildkit",
+    "harness:docker": "tsx src/run.ts --allow-docker --adapter=tcons-docker-bind --merge && tsx src/run.ts --allow-docker --adapter=tcons-docker-volume --merge && tsx src/run.ts --allow-docker --adapter=tcons-local-docker-chain --merge",
+    "probe:lifecycle": "node scripts/lifecycle-probe.cjs",
+    "summarize": "node scripts/summarize.cjs && node scripts/summarize-docker.cjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "esbuild": "^0.25.0",
+    "fflate": "^0.8.2",
+    "rolldown": "1.2.7",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
