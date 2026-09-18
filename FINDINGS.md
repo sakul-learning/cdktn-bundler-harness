@@ -48,7 +48,9 @@ obtained.
 
 1. **`AssetType.FILE` + bundler is unreachable, so a real archive-producing bundler can
    only return a directory.** `rolldown-zip` is upstream's own design (deterministic
-   `archive.zip`, `sha256(zip)` as identity); as an `IAssetBundler` it must hand back the
+   `archive.zip`, with the hash taken *from the artifact* — that bundler's own
+   output-derived identity choice; cdktn's default identity is the filtered source +
+   `bundlerKey`); as an `IAssetBundler` it must hand back the
    directory *containing* the archive. Rejection is at construction, with this text
    (identical for every adapter, and naming the internal child construct, not the user's
    asset):
@@ -148,9 +150,12 @@ will have to make the same choice explicit.
 
 - The interface is sufficient for **local, esbuild/Rolldown and Docker** bundlers as long
   as the artifact is a directory and identity is `SOURCE`+`bundlerKey`.
-- The three gaps worth deciding before third-party bundlers exist: an archive-producing
-  bundler has no first-class representation (item 1 + 2), `exclude` semantics are
-  undefined for bundlers (item 3), and `stage()`'s repeatability is unspecified while
-  `OUTPUT` hashing makes it identity-relevant (item 6).
+- Identity is the filtered source + `bundlerKey` (+ `extraHash`/salt), and that is correct
+  by design — the gaps worth deciding before third-party bundlers exist are about the
+  interface *enforcing the premise* that declared intent determines the output: an
+  archive-producing bundler has no first-class representation (item 1 + 2), `exclude`
+  filters the identity but not the bundler's input (item 3), and `stage()`'s repeatability
+  is unspecified while a non-deterministic bundler breaks "one identity ⇒ one artifact"
+  (`OUTPUT` hashing is what makes that identity-relevant, item 6).
 - Items 4, 5 and 7 are ergonomics/lifecycle rather than blockers: they cost adapter
   authors boilerplate and leak scratch on failure, but every ported bundler still worked.

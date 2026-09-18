@@ -53,17 +53,33 @@ TerraConstructsDockerBundler/bind -> TerraformAsset Staging was configured with 
 which cannot be staged as a single file.
 ```
 
-**Workaround used:** return the directory *containing* the archive. That is not equivalent:
-the identity now hashes a wrapper directory (`AssetHashType.OUTPUT` → hash of
-`{"archive.zip": …}` rather than of the zip), and if the caller also asks for
-`AssetPackaging.ZIP` the result is a zip whose single entry is `archive.zip`
+**Identity, by design, is declared intent — not bytes on disk.** `assetHash` is
+`md5(hashSource ⊕ extraHash ⊕ bundlerKey ⊕ salt)`, where `hashSource` fingerprints the
+**filtered** source tree (`this.ignoreStrategy.ignores(...)`), and `AssetHashType.OUTPUT`
+with a bundler builds eagerly and folds `hashOutput` of the staged artifact instead,
+forgoing skippability (#380). A bundler's build configuration therefore belongs in
+`bundlerKey`, and changing it *should* move the hash. Nothing in this report disputes that
+model: the findings are about the places where the interface lets its premise — *same
+declared intent ⇒ same output* — be falsified (an incomplete `bundlerKey`, an `exclude`
+list that reaches the identity but not the bundler, a bundler that is not deterministic),
+plus one artifact shape the model cannot describe at all.
+
+**Workaround used:** return the directory *containing* the archive, and/or let the caller
+ask for `AssetPackaging.ZIP`. Neither is the same shape as "stage this file": with `ZIP`
+packaging the result is a zip whose single entry is `archive.zip`
 (`doubleArchived: "archive.zip"` in `results.json` for `rolldown-zip`).
 
-**Cost:** PR #402's hash deliberately equals the zip's sha256 so the artifact can be
-compared against an S3-published archive or a Lambda package. Through `IAssetBundler` that
-property is lost. **Suggestion:** let `bundle()` declare its artifact shape (a
-`producesArchive`/`outputType` member, or allow the packaging to consume a file), so the
-FILE case stops being a hard reject.
+**Cost:** for a bundler whose identity choice was "the hash *is* the archive digest"
+(PR #402: `assetHash === sha256(archive.zip)`, which lets an artifact be compared directly
+against an S3-published zip or a Lambda package), that exact numeric equality is not
+reachable through the interface — computed hashes are 32-hex foldings of source+config, by
+design. What *is* preserved is the property that matters: any change in the archive moves
+the hash, through the config for `SOURCE` (given a deterministic bundler) or through the
+staged tree for `OUTPUT`. The residual friction is therefore **shape, not identity**:
+`AssetType.FILE` + bundler is a hard reject, so `SINGLE_FILE`/`ARCHIVED` bundlers need
+`ZIP` packaging or a wrapper directory. **Suggestion:** let `bundle()` declare its artifact
+shape (a `producesArchive`/`outputType` member, or allow the packaging to consume a file),
+so the FILE case stops being a hard reject — without touching the identity model.
 
 ### 1.2 Build configuration (the bundler's entire surface)
 
@@ -85,11 +101,20 @@ forgotten there. Here it can: an adapter author who forgets `bundlerKey` silentl
 stale assets when only the options change (my `rolldown-dir`/`rolldown-zip`/`tcons-nodejs`
 ports all had to remember it).
 
-**Cost:** hand-rolled identity per adapter, no shared convention, no image digest in the
-key (rebuilding `alpine:latest` does not move the hash). **Suggestion:** state a
-requirement in the `bundlerKey` docs ("serialise every option that can change the output,
-including image/digest and tool version"), or provide a helper
-(`bundlerKeyFor(config)`) that adapters can use.
+**Cost:** the model is fine, the channel is thin. `bundlerKey` is (a) *the only* way to get
+configuration into the identity, (b) optional, and (c) unvalidated — so the DX burden is
+"remember to serialise everything", and the failure mode of forgetting is silent reuse of
+stale artifacts rather than an error. Two further consequences: the config has no
+representation in the interface, so a caller cannot pass options to a bundler at all (the
+implementer hardcodes them on the instance, as all six `tcons-*`/buildkit ports do), and
+neither this key nor TerraConstructs' `JSON.stringify(bundlingConfig)` covers the *resolved*
+image digest (`alpine:latest` moving does not move the hash in either design — it is a
+property of hashing a reference, not of cdktn). My `rolldown-dir`/`rolldown-zip`/
+`tcons-nodejs` ports all had to remember the key, and that is the whole convention.
+
+**Suggestion:** state the requirement in the `bundlerKey` docs ("serialise every option
+that can change the output, including image/tool version"), and provide a helper
+(`bundlerKeyFor(config)`) so the convention has one implementation rather than nine.
 
 ### 1.3 "Try local, else Docker" — the decline protocol
 
@@ -118,27 +143,38 @@ documented sentinel/`Error` subclass meaning "declined, fall back" — anything 
 Docs (`src/asset-staging.ts`): *"`exclude` filters the source a bundler reads, not the
 artifact it produces."* **What the interface gives you:** only the raw `source` path.
 
+This is the clearest case of the identity premise being falsified, and it is the
+*documented* behaviour that does it. `exclude` **is** part of the identity —
+`hashSource()` fingerprints through `this.ignoreStrategy.ignores(...)`, so `skip.txt` is
+excluded from the hash — but the bundler is handed the unfiltered directory. The hash is
+then correct for the intent and wrong for the artifact: one identity, two contents,
+silently. Changing the excluded file's content moves the artifact and not the hash
+(`excludedFileShippedInArtifact=true`, `hashUnchangedDespiteExcludedChange=true`,
+`artifactChanged=true`); the reverse direction is just as wrong — `tcons-local` and the
+three Docker ports copy the excluded file into the artifact, so a `SOURCE`-hashed asset can
+ship bytes that nothing in its identity accounts for.
+
 **Workaround used:** nothing general. Entry-graph bundlers (esbuild, Rolldown) never open
-the excluded file, so they look correct by accident; copy-everything bundlers
-(`tcons-local`, all three Docker ports) cannot see the option at all and ship it. Measured:
-`excludedFileShippedInArtifact=true`, `artifactChanged=true`, `hashUnchanged` — one
-identity, two contents. Repro: `repro/pr-head-98b39e49/pr442-exclude.js` (see also
+the excluded file, so they look correct by accident; copy-everything bundlers cannot see
+the option at all. Repro: `repro/pr-head-98b39e49/pr442-exclude.js` (see also
 `FINDINGS.md` §"exclude is not communicated", review issue #10).
 
-**Suggestion:** either hand the bundler a filtered view (a materialised input dir, as
-TerraConstructs'/CDK's `BUNDLING_INPUT_DIR` allows) or drop the claim from the docs.
+**Suggestion:** hand the bundler the *same* filtered view the identity is computed from
+(materialise the filtered input, as TerraConstructs/CDK's `BUNDLING_INPUT_DIR` allows), or
+drop the claim from the docs and document that `exclude` does not constrain a bundler's
+inputs.
 
 ## 2. Awkward but workable (adapters carry the cost)
 
 | DX issue | Symptom measured | Adapter workaround | Review ref |
 | --- | --- | --- | --- |
 | `source` documented absolute, delivered relative when the config path is relative | `bundlerSawAbsolute=false`; a bundler that spawns a tool with its own cwd (docker `-w`, esbuild, gradle) resolves elsewhere | adapters must `path.resolve` and hope the caller did not rely on relative semantics | #12 |
-| Second `stage()`/`synth()` rebuilds after the eager build consumed the artifact | `rebuiltOnSecondStage=true`, `rebuiltOnSecondSynth=true`; with a non-reproducible bundler `sameIdentityDifferentBytes=true` for **all nine** adapters | none available to the bundler — it cannot know it is being called twice; only cdktn can retain the artifact or reject reuse | #11 |
+| Second `stage()`/`synth()` rebuilds after the eager build consumed the artifact | `rebuiltOnSecondStage=true`, `rebuiltOnSecondSynth=true`; with a non-reproducible bundler `sameIdentityDifferentBytes=true` for **all nine** adapters | none available to the bundler — it cannot know it is being called twice; only cdktn can retain the artifact or reject reuse. Note the premise this rests on: the identity model assumes a **deterministic** bundler, and the interface never states it | #11 |
 | Scratch lifecycle owned by cdktn only | failed build leaves the scratch in-process (`scratchDirsLeftInProcess=1`, 8.1 MB in the never-staged case) and signals strand it entirely (SIGINT/SIGTERM: `scratchSurvived=true`) | bundlers cannot clean up: they are handed `outputDir` but not its lifetime | #13 |
 | Diagnostics name the wrong thing | `TerraformAsset Staging was configured with a 'bundler' and file packaging (AssetType.FILE)` fires for an `AssetStaging` caller with custom packaging, and names the internal child id `Staging`; an out-of-range `AssetType` with a file source now reports the path/type mismatch instead of `Asset type is not implemented` | none — the messages are produced inside cdktn | #14 |
 | `bundle()`'s return value is not validated | a file-returning bundler silently bypasses the "always a directory" contract | every adapter had to be written defensively; the harness asserts the shape itself | #17 |
 | `acceptsDirectorySource` is a required interface member | out-of-tree `IAssetPackaging` implementers break at compile time; `assets-types.test.ts` asserts nothing about it | adapters implement it by hand; the flag does not describe *archive* sources, only directory-reading ones | #15 |
-| Identity via an opaque string | no way to express "this bundler is not reproducible" or "options changed" other than the author's own serialisation | adapters serialise config into `bundlerKey` | — |
+| `bundlerKey` is the only config channel and it is optional | a bundler that folds nothing (or an incomplete config) into its key keeps the source-only hash and silently reuses stale artifacts; nothing in the library can detect it | every port hand-writes its key and documents it; the harness asserts `identityFollowsBundlerKey=true` | #15-adjacent |
 
 ## 3. What ported cleanly (no workaround needed)
 
@@ -191,19 +227,27 @@ Verified on this host (Docker 29.5.3, buildx v0.34.1):
 
 ## 5. Ranked suggestions
 
-1. Decide what an archive-producing bundler returns (`producesArchive`/`outputType`, or
-   allow a file result) — otherwise #402-style bundlers lose their identity semantics
-   (issues #11/#17 territory).
-2. Make `exclude` honest: filter the input the bundler sees, or delete the doc claim (#10).
-3. Define `stage()` reuse: retain the eager artifact, or document + assert single-use
-   (`#11`), and validate `bundle()`'s return (#17).
+None of these touch the identity model — `md5(hashSource(filtered) ⊕ extraHash ⊕
+bundlerKey ⊕ salt)`, with `SOURCE` as the default, is right: the declared intent (filtered
+input + build config) determines the output, and making every asset hash output-derived
+would cost the skippability that #380 added. They are about making that premise actually
+hold at the bundler boundary.
+
+1. Let a bundler declare its artifact shape (`producesArchive`/`outputType`, or let `ZIP`
+   packaging consume a file) so `SINGLE_FILE`/`ARCHIVED` bundlers stop needing a wrapper
+   directory.
+2. Make `exclude` honest: the identity already filters the source, the bundler input does
+   not — materialise the same filtered input, or delete the doc claim (#10).
+3. Define `stage()` reuse: retain the eager artifact or assert single-use (#11); validate
+   `bundle()`'s return (#17); and document the determinism assumption the identity model
+   rests on, where bundler authors will read it.
 4. Give the fallback chain a voice: a decline/`local` protocol so third-party local and
    Docker bundlers can be composed instead of re-implemented.
-5. Document `bundlerKey` as "serialise everything that can change the output, including
-   image digest and tool version", and consider a helper.
+5. Say what `bundlerKey` must contain (everything that can move the output) and ship a
+   helper, so the convention has one implementation instead of nine.
 6. Guarantee `BundleOptions.source` is absolute (or fix the docs).
-7. Keep scratch lifecycle inside cdktn, but say what happens on failure and on signals
-   (#13), and fix the guard messages to name the caller's construct (#14).
+7. Keep the scratch lifecycle inside cdktn, but document failure/signal behaviour (#13)
+   and fix the guard messages to name the caller's construct (#14).
 
 ## 6. Caveats
 
