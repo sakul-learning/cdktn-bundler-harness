@@ -1,6 +1,6 @@
 # cdktn asset-bundler harness — results
 
-- Generated: 2026-09-18T01:51:03.729Z + 2026-09-18T01:51:19.652Z + 2026-09-18T01:51:36.270Z + 2026-09-18T01:51:41.414Z
+- Generated: 2026-09-18T02:00:41.662Z + 2026-09-18T02:00:46.686Z + 2026-09-18T02:00:58.196Z + 2026-09-18T02:01:03.415Z + 2026-09-18T02:01:11.939Z + 2026-09-18T02:04:03.978Z
 - Targets cdktn **PR #442** head `98b39e49f6dd6bb5cc94ca30302d5928e7c836bb` (interface `IAssetBundler` + `bundler` on `AssetStaging`/`TerraformAsset`)
 - Library under test: `/data/repos/hermes-pr-reviewer/worktrees/cdk-terrain/open-constructs__cdk-terrain/pr-442/packages/cdktn/lib/index.js`
 
@@ -11,7 +11,7 @@
 - tmpdir: /data/tmp/harness-tmp
 - docker: Docker version 29.5.3, build d1c06ef
 - buildctl: <unavailable>
-- buildkitAddr: <unset>
+- buildkitAddr: tcp://127.0.0.1:1234
 
 ## Adapters
 
@@ -63,22 +63,28 @@
 - Ported in: `src/adapters/buildkit.ts`
 - Port notes: Ports 'build against a buildkitd endpoint, not the Docker daemon socket' into a sync `bundle()` by shelling out to `buildctl` with `--output type=local,dest=<outputDir>`, which returns the artifact through the client session. Upstream's Terraform-resource half (buildkit_image, registry push, source_hash triggers) has no place in the bundler contract and stays out.
 
+### buildkit-docker-daemon — buildkit via the Docker daemon (buildx docker driver)
+
+- Provenance: Docker 23+ embedded BuildKit as the endpoint (docker buildx ls -> default builder, DRIVER=docker); PR #165 contrast case
+- Ported in: `src/adapters/buildkit-docker-driver.ts`
+- Port notes: No buildkitd gRPC endpoint and no BUILDCTL: builds go through the Engine API to the daemon's embedded BuildKit. Builder name, driver, Dockerfile name, build args and platform cannot be expressed by BundleOptions, so they live on the adapter instance and reach identity only via the hand-written bundlerKey (no image/driver version in it, unlike TerraConstructs' config digests).
+
 ## Results matrix
 
-| scenario | tcons-local | tcons-nodejs | rolldown-dir | rolldown-zip | tcons-local-docker-chain | tcons-docker-bind | tcons-docker-volume | buildkit-local-output |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `stage/source-hash` | pass | pass | pass | pass | pass | pass | pass | skip |
-| `stage/output-hash` | pass | pass | pass | pass | pass | pass | pass | skip |
-| `stage/zip-packaging` | pass | pass | pass | pass | pass | pass | pass | skip |
-| `repeat/stage-twice` | pass | pass | pass | pass | pass | pass | pass | skip |
-| `repeat/stage-twice-nondeterministic` | pass | pass | pass | pass | pass | pass | pass | skip |
-| `repeat/synth-twice` | pass | pass | pass | pass | pass | pass | pass | skip |
-| `asset/file-type-bundler` | pass | pass | pass | pass | pass | pass | pass | skip |
-| `failure/bundler-throws` | pass | pass | pass | pass | pass | pass | pass | skip |
-| `identity/excluded-input-changes` | pass | pass | pass | pass | pass | pass | pass | skip |
-| `determinism/two-fresh-builds` | pass | pass | pass | pass | pass | pass | pass | skip |
-| `identity/bundler-key` | pass | pass | pass | pass | pass | pass | pass | skip |
-| `large-output/never-staged` | pass | pass | pass | pass | pass | pass | pass | skip |
+| scenario | tcons-local | tcons-nodejs | rolldown-dir | rolldown-zip | tcons-local-docker-chain | tcons-docker-bind | tcons-docker-volume | buildkit-local-output | buildkit-docker-daemon |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `stage/source-hash` | pass | pass | pass | pass | pass | pass | pass | pass | pass |
+| `stage/output-hash` | pass | pass | pass | pass | pass | pass | pass | pass | pass |
+| `stage/zip-packaging` | pass | pass | pass | pass | pass | pass | pass | pass | pass |
+| `repeat/stage-twice` | pass | pass | pass | pass | pass | pass | pass | pass | pass |
+| `repeat/stage-twice-nondeterministic` | pass | pass | pass | pass | pass | pass | pass | pass | pass |
+| `repeat/synth-twice` | pass | pass | pass | pass | pass | pass | pass | pass | pass |
+| `asset/file-type-bundler` | pass | pass | pass | pass | pass | pass | pass | pass | pass |
+| `failure/bundler-throws` | pass | pass | pass | pass | pass | pass | pass | pass | pass |
+| `identity/excluded-input-changes` | pass | pass | pass | pass | pass | pass | pass | pass | pass |
+| `determinism/two-fresh-builds` | pass | pass | pass | pass | pass | pass | pass | pass | pass |
+| `identity/bundler-key` | pass | pass | pass | pass | pass | pass | pass | pass | pass |
+| `large-output/never-staged` | pass | pass | pass | pass | pass | pass | pass | pass | pass |
 
 ## Observations
 
@@ -91,7 +97,7 @@
   "bundlerCallsAtConstruction": 0,
   "bundlerCallsAfterStage": 1,
   "eagerBuild": false,
-  "assetHash": "ACDD942A0867A8894A8342855DD89F33",
+  "assetHash": "0F94DB8EB14646CB6CF4B6BF111E24C6",
   "stagedFiles": [
     "dist/BUILT",
     "dist/COPY.txt",
@@ -103,8 +109,8 @@
     "dist/second.ts",
     "leftover.txt"
   ],
-  "stagedTreeHash": "f002adec26e4eefd74c2c7ebac2f9c2cd1fef59aa5c37c9831f9ab2a84a99029",
-  "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-CRYzla",
+  "stagedTreeHash": "6c28d0ceb0deecfe409047cd0d1e09818b161ba79b9093b34242cde50b4fd080",
+  "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-JrYAow",
   "newScratchDirs": 0
 }
 ```
@@ -117,12 +123,12 @@
   "bundlerCallsAtConstruction": 0,
   "bundlerCallsAfterStage": 1,
   "eagerBuild": false,
-  "assetHash": "4D0C9B9961A09D3DF5574F0838BDAD9E",
+  "assetHash": "C00B7C280F18A455D0F48467480C157E",
   "stagedFiles": [
     "index.js"
   ],
   "stagedTreeHash": "1ed269d14e603c1a9a4c4cc54dd5e7509b33a687432edafc6c0015907192ebc6",
-  "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-PX3X71",
+  "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-uXduhB",
   "newScratchDirs": 0
 }
 ```
@@ -135,12 +141,12 @@
   "bundlerCallsAtConstruction": 0,
   "bundlerCallsAfterStage": 1,
   "eagerBuild": false,
-  "assetHash": "42EBCB96EF81036640A872D08FE595C5",
+  "assetHash": "6C5E49C7F0E6A496316F8CE8520B9C82",
   "stagedFiles": [
     "index.mjs"
   ],
   "stagedTreeHash": "d931b15cb0140f4b263e6be9ea0548ac57c97bcbca3f56d6f0c88b243fb691f3",
-  "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-H2OL6i",
+  "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-W1Puwj",
   "newScratchDirs": 0
 }
 ```
@@ -153,12 +159,12 @@
   "bundlerCallsAtConstruction": 0,
   "bundlerCallsAfterStage": 1,
   "eagerBuild": false,
-  "assetHash": "905E409CE3D3BC6244891CA4ED8F2C19",
+  "assetHash": "1D05C21925DBCB2D4B226F038A0F7C58",
   "stagedFiles": [
     "archive.zip"
   ],
   "stagedTreeHash": "088e2e43ca3e3c907354214bdc91fe00399f219dc0d349341ec9b1d71fd68a69",
-  "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-1MDXmk",
+  "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-k8Wyxg",
   "newScratchDirs": 0
 }
 ```
@@ -171,7 +177,7 @@
   "bundlerCallsAtConstruction": 0,
   "bundlerCallsAfterStage": 1,
   "eagerBuild": false,
-  "assetHash": "827852C127D9BFF7BB5DE25AC8A3276E",
+  "assetHash": "EE710F8A4C48218A4C8CB42AB22D42A3",
   "stagedFiles": [
     "dist/COPY.txt",
     "dist/Dockerfile.bundle",
@@ -181,8 +187,8 @@
     "dist/package.json",
     "dist/second.ts"
   ],
-  "stagedTreeHash": "8b2b2c6dfcbdf15440db48aa74bf13a2a499a5cb99a9d49050a872e5e174d264",
-  "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-qCZD52",
+  "stagedTreeHash": "83bb1637626733a8daf18bb92da2c0f4449797e1235670ab76526d55cb325876",
+  "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-HJ2azS",
   "newScratchDirs": 0
 }
 ```
@@ -195,7 +201,7 @@
   "bundlerCallsAtConstruction": 0,
   "bundlerCallsAfterStage": 1,
   "eagerBuild": false,
-  "assetHash": "B523EFF1B3D4E016A17FDD01C415FF74",
+  "assetHash": "9B1A30667E8216BEC1FB1C521763D6D6",
   "stagedFiles": [
     "dist/BUILT",
     "dist/COPY.txt",
@@ -206,8 +212,8 @@
     "dist/package.json",
     "dist/second.ts"
   ],
-  "stagedTreeHash": "3b5973f33b7a144c53581f4f922e313dc84d5fc4001bc3d69908098dae432ae6",
-  "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-hDNHm0",
+  "stagedTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
+  "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-4iae9I",
   "newScratchDirs": 0
 }
 ```
@@ -220,7 +226,7 @@
   "bundlerCallsAtConstruction": 0,
   "bundlerCallsAfterStage": 1,
   "eagerBuild": false,
-  "assetHash": "D207E28202F34F0EAA0989F70F7200A3",
+  "assetHash": "C6A9EE8936D8296FD085D4147A799ACE",
   "stagedFiles": [
     "dist/BUILT",
     "dist/COPY.txt",
@@ -231,19 +237,59 @@
     "dist/package.json",
     "dist/second.ts"
   ],
-  "stagedTreeHash": "3b5973f33b7a144c53581f4f922e313dc84d5fc4001bc3d69908098dae432ae6",
-  "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-45GeDw",
+  "stagedTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
+  "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-NAZkwK",
   "newScratchDirs": 0
 }
 ```
 </details>
 
-<details><summary><b>buildkit-local-output</b> — skipped</summary>
+<details><summary><b>buildkit-local-output</b> — pass</summary>
 
 ```json
 {
-  "gate": "gated: pass --allow-buildkit to run buildkit-endpoint scenarios",
-  "probe": "buildctl not found (set BUILDCTL=/path/to/buildctl); BUILDKIT_ADDR=<unset>"
+  "bundlerCallsAtConstruction": 0,
+  "bundlerCallsAfterStage": 1,
+  "eagerBuild": false,
+  "assetHash": "B9E6B83731F07590D0E8C7F643231006",
+  "stagedFiles": [
+    "BUILT",
+    "COPY.txt",
+    "Dockerfile.bundle",
+    "excludeme.txt",
+    "index.ts",
+    "lib/dep.ts",
+    "package.json",
+    "second.ts"
+  ],
+  "stagedTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+  "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-pI6Xj1",
+  "newScratchDirs": 0
+}
+```
+</details>
+
+<details><summary><b>buildkit-docker-daemon</b> — pass</summary>
+
+```json
+{
+  "bundlerCallsAtConstruction": 0,
+  "bundlerCallsAfterStage": 1,
+  "eagerBuild": false,
+  "assetHash": "94C22CE195D86C1223E95988405A6713",
+  "stagedFiles": [
+    "BUILT",
+    "COPY.txt",
+    "Dockerfile.bundle",
+    "excludeme.txt",
+    "index.ts",
+    "lib/dep.ts",
+    "package.json",
+    "second.ts"
+  ],
+  "stagedTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+  "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-nqsxT9",
+  "newScratchDirs": 0
 }
 ```
 </details>
@@ -257,9 +303,9 @@
   "bundlerCallsAtConstruction": 1,
   "eagerBuild": true,
   "artifactStillPresentAtStageTime": false,
-  "assetHash": "59D47EA9E5304F5ACB318416F4E066B9",
-  "builtArtifactTreeHash": "f002adec26e4eefd74c2c7ebac2f9c2cd1fef59aa5c37c9831f9ab2a84a99029",
-  "stagedTreeHash": "f002adec26e4eefd74c2c7ebac2f9c2cd1fef59aa5c37c9831f9ab2a84a99029",
+  "assetHash": "071E01E57EB7516D3C1AAB3A84D6C5A3",
+  "builtArtifactTreeHash": "6c28d0ceb0deecfe409047cd0d1e09818b161ba79b9093b34242cde50b4fd080",
+  "stagedTreeHash": "6c28d0ceb0deecfe409047cd0d1e09818b161ba79b9093b34242cde50b4fd080",
   "stagingMatchesArtifact": true,
   "newScratchDirs": 0
 }
@@ -321,9 +367,9 @@
   "bundlerCallsAtConstruction": 1,
   "eagerBuild": true,
   "artifactStillPresentAtStageTime": false,
-  "assetHash": "827852C127D9BFF7BB5DE25AC8A3276E",
-  "builtArtifactTreeHash": "8b2b2c6dfcbdf15440db48aa74bf13a2a499a5cb99a9d49050a872e5e174d264",
-  "stagedTreeHash": "8b2b2c6dfcbdf15440db48aa74bf13a2a499a5cb99a9d49050a872e5e174d264",
+  "assetHash": "EE710F8A4C48218A4C8CB42AB22D42A3",
+  "builtArtifactTreeHash": "83bb1637626733a8daf18bb92da2c0f4449797e1235670ab76526d55cb325876",
+  "stagedTreeHash": "83bb1637626733a8daf18bb92da2c0f4449797e1235670ab76526d55cb325876",
   "stagingMatchesArtifact": true,
   "newScratchDirs": 0
 }
@@ -337,9 +383,9 @@
   "bundlerCallsAtConstruction": 1,
   "eagerBuild": true,
   "artifactStillPresentAtStageTime": false,
-  "assetHash": "E870586E22427A6545386491E54B5052",
-  "builtArtifactTreeHash": "3b5973f33b7a144c53581f4f922e313dc84d5fc4001bc3d69908098dae432ae6",
-  "stagedTreeHash": "3b5973f33b7a144c53581f4f922e313dc84d5fc4001bc3d69908098dae432ae6",
+  "assetHash": "42D004958213F4F567A25444957CF47D",
+  "builtArtifactTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
+  "stagedTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
   "stagingMatchesArtifact": true,
   "newScratchDirs": 0
 }
@@ -353,21 +399,43 @@
   "bundlerCallsAtConstruction": 1,
   "eagerBuild": true,
   "artifactStillPresentAtStageTime": false,
-  "assetHash": "DA0376958828E31B772CA2BA7F73B1DE",
-  "builtArtifactTreeHash": "3b5973f33b7a144c53581f4f922e313dc84d5fc4001bc3d69908098dae432ae6",
-  "stagedTreeHash": "3b5973f33b7a144c53581f4f922e313dc84d5fc4001bc3d69908098dae432ae6",
+  "assetHash": "9D8662BECC4608351C64916751988357",
+  "builtArtifactTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
+  "stagedTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
   "stagingMatchesArtifact": true,
   "newScratchDirs": 0
 }
 ```
 </details>
 
-<details><summary><b>buildkit-local-output</b> — skipped</summary>
+<details><summary><b>buildkit-local-output</b> — pass</summary>
 
 ```json
 {
-  "gate": "gated: pass --allow-buildkit to run buildkit-endpoint scenarios",
-  "probe": "buildctl not found (set BUILDCTL=/path/to/buildctl); BUILDKIT_ADDR=<unset>"
+  "bundlerCallsAtConstruction": 1,
+  "eagerBuild": true,
+  "artifactStillPresentAtStageTime": false,
+  "assetHash": "F8F193C27F9E13B31A3B3C1CD5479836",
+  "builtArtifactTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+  "stagedTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+  "stagingMatchesArtifact": true,
+  "newScratchDirs": 0
+}
+```
+</details>
+
+<details><summary><b>buildkit-docker-daemon</b> — pass</summary>
+
+```json
+{
+  "bundlerCallsAtConstruction": 1,
+  "eagerBuild": true,
+  "artifactStillPresentAtStageTime": false,
+  "assetHash": "D291A7AA1E31550B0BD4F959B1F2E0CD",
+  "builtArtifactTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+  "stagedTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+  "stagingMatchesArtifact": true,
+  "newScratchDirs": 0
 }
 ```
 </details>
@@ -384,7 +452,7 @@
   "packagingAcceptsDirectorySource": true,
   "packagingOmitsDirectoryEntries": true,
   "bundleArtifactIsDirectory": true,
-  "archiveBytes": 1401,
+  "archiveBytes": 1438,
   "archiveEntries": [
     "dist/BUILT",
     "dist/COPY.txt",
@@ -396,7 +464,7 @@
     "dist/second.ts",
     "leftover.txt"
   ],
-  "assetHash": "ACDD942A0867A8894A8342855DD89F33",
+  "assetHash": "0F94DB8EB14646CB6CF4B6BF111E24C6",
   "bundlerBuilds": 1,
   "newScratchDirs": 0
 }
@@ -417,7 +485,7 @@
   "archiveEntries": [
     "index.js"
   ],
-  "assetHash": "4D0C9B9961A09D3DF5574F0838BDAD9E",
+  "assetHash": "C00B7C280F18A455D0F48467480C157E",
   "bundlerBuilds": 1,
   "newScratchDirs": 0
 }
@@ -438,7 +506,7 @@
   "archiveEntries": [
     "index.mjs"
   ],
-  "assetHash": "42EBCB96EF81036640A872D08FE595C5",
+  "assetHash": "6C5E49C7F0E6A496316F8CE8520B9C82",
   "bundlerBuilds": 1,
   "newScratchDirs": 0
 }
@@ -460,7 +528,7 @@
     "archive.zip"
   ],
   "doubleArchived": "archive.zip",
-  "assetHash": "905E409CE3D3BC6244891CA4ED8F2C19",
+  "assetHash": "1D05C21925DBCB2D4B226F038A0F7C58",
   "bundlerBuilds": 1,
   "newScratchDirs": 0
 }
@@ -477,7 +545,7 @@
   "packagingAcceptsDirectorySource": true,
   "packagingOmitsDirectoryEntries": true,
   "bundleArtifactIsDirectory": true,
-  "archiveBytes": 1189,
+  "archiveBytes": 1226,
   "archiveEntries": [
     "dist/COPY.txt",
     "dist/Dockerfile.bundle",
@@ -487,7 +555,7 @@
     "dist/package.json",
     "dist/second.ts"
   ],
-  "assetHash": "827852C127D9BFF7BB5DE25AC8A3276E",
+  "assetHash": "EE710F8A4C48218A4C8CB42AB22D42A3",
   "bundlerBuilds": 1,
   "newScratchDirs": 0
 }
@@ -504,7 +572,7 @@
   "packagingAcceptsDirectorySource": true,
   "packagingOmitsDirectoryEntries": true,
   "bundleArtifactIsDirectory": true,
-  "archiveBytes": 1306,
+  "archiveBytes": 1343,
   "archiveEntries": [
     "dist/BUILT",
     "dist/COPY.txt",
@@ -515,7 +583,7 @@
     "dist/package.json",
     "dist/second.ts"
   ],
-  "assetHash": "B523EFF1B3D4E016A17FDD01C415FF74",
+  "assetHash": "9B1A30667E8216BEC1FB1C521763D6D6",
   "bundlerBuilds": 1,
   "newScratchDirs": 0
 }
@@ -532,7 +600,7 @@
   "packagingAcceptsDirectorySource": true,
   "packagingOmitsDirectoryEntries": true,
   "bundleArtifactIsDirectory": true,
-  "archiveBytes": 1306,
+  "archiveBytes": 1343,
   "archiveEntries": [
     "dist/BUILT",
     "dist/COPY.txt",
@@ -543,19 +611,65 @@
     "dist/package.json",
     "dist/second.ts"
   ],
-  "assetHash": "D207E28202F34F0EAA0989F70F7200A3",
+  "assetHash": "C6A9EE8936D8296FD085D4147A799ACE",
   "bundlerBuilds": 1,
   "newScratchDirs": 0
 }
 ```
 </details>
 
-<details><summary><b>buildkit-local-output</b> — skipped</summary>
+<details><summary><b>buildkit-local-output</b> — pass</summary>
 
 ```json
 {
-  "gate": "gated: pass --allow-buildkit to run buildkit-endpoint scenarios",
-  "probe": "buildctl not found (set BUILDCTL=/path/to/buildctl); BUILDKIT_ADDR=<unset>"
+  "stageTargetIsFile": true,
+  "packagingExtension": ".zip",
+  "packagingProducesDirectory": false,
+  "packagingAcceptsDirectorySource": true,
+  "packagingOmitsDirectoryEntries": true,
+  "bundleArtifactIsDirectory": true,
+  "archiveBytes": 1259,
+  "archiveEntries": [
+    "BUILT",
+    "COPY.txt",
+    "Dockerfile.bundle",
+    "excludeme.txt",
+    "index.ts",
+    "lib/dep.ts",
+    "package.json",
+    "second.ts"
+  ],
+  "assetHash": "B9E6B83731F07590D0E8C7F643231006",
+  "bundlerBuilds": 1,
+  "newScratchDirs": 0
+}
+```
+</details>
+
+<details><summary><b>buildkit-docker-daemon</b> — pass</summary>
+
+```json
+{
+  "stageTargetIsFile": true,
+  "packagingExtension": ".zip",
+  "packagingProducesDirectory": false,
+  "packagingAcceptsDirectorySource": true,
+  "packagingOmitsDirectoryEntries": true,
+  "bundleArtifactIsDirectory": true,
+  "archiveBytes": 1259,
+  "archiveEntries": [
+    "BUILT",
+    "COPY.txt",
+    "Dockerfile.bundle",
+    "excludeme.txt",
+    "index.ts",
+    "lib/dep.ts",
+    "package.json",
+    "second.ts"
+  ],
+  "assetHash": "94C22CE195D86C1223E95988405A6713",
+  "bundlerBuilds": 1,
+  "newScratchDirs": 0
 }
 ```
 </details>
@@ -566,12 +680,12 @@
 
 ```json
 {
-  "assetHash": "59D47EA9E5304F5ACB318416F4E066B9",
+  "assetHash": "071E01E57EB7516D3C1AAB3A84D6C5A3",
   "bundlerCallsAfterFirstStage": 1,
   "bundlerCallsAfterSecondStage": 2,
   "rebuiltOnSecondStage": true,
-  "firstTreeHash": "f002adec26e4eefd74c2c7ebac2f9c2cd1fef59aa5c37c9831f9ab2a84a99029",
-  "secondTreeHash": "f002adec26e4eefd74c2c7ebac2f9c2cd1fef59aa5c37c9831f9ab2a84a99029",
+  "firstTreeHash": "6c28d0ceb0deecfe409047cd0d1e09818b161ba79b9093b34242cde50b4fd080",
+  "secondTreeHash": "6c28d0ceb0deecfe409047cd0d1e09818b161ba79b9093b34242cde50b4fd080",
   "artifactsIdentical": true,
   "newScratchDirs": 0
 }
@@ -630,12 +744,12 @@
 
 ```json
 {
-  "assetHash": "827852C127D9BFF7BB5DE25AC8A3276E",
+  "assetHash": "EE710F8A4C48218A4C8CB42AB22D42A3",
   "bundlerCallsAfterFirstStage": 1,
   "bundlerCallsAfterSecondStage": 2,
   "rebuiltOnSecondStage": true,
-  "firstTreeHash": "8b2b2c6dfcbdf15440db48aa74bf13a2a499a5cb99a9d49050a872e5e174d264",
-  "secondTreeHash": "8b2b2c6dfcbdf15440db48aa74bf13a2a499a5cb99a9d49050a872e5e174d264",
+  "firstTreeHash": "83bb1637626733a8daf18bb92da2c0f4449797e1235670ab76526d55cb325876",
+  "secondTreeHash": "83bb1637626733a8daf18bb92da2c0f4449797e1235670ab76526d55cb325876",
   "artifactsIdentical": true,
   "newScratchDirs": 0
 }
@@ -646,12 +760,12 @@
 
 ```json
 {
-  "assetHash": "E870586E22427A6545386491E54B5052",
+  "assetHash": "42D004958213F4F567A25444957CF47D",
   "bundlerCallsAfterFirstStage": 1,
   "bundlerCallsAfterSecondStage": 2,
   "rebuiltOnSecondStage": true,
-  "firstTreeHash": "3b5973f33b7a144c53581f4f922e313dc84d5fc4001bc3d69908098dae432ae6",
-  "secondTreeHash": "3b5973f33b7a144c53581f4f922e313dc84d5fc4001bc3d69908098dae432ae6",
+  "firstTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
+  "secondTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
   "artifactsIdentical": true,
   "newScratchDirs": 0
 }
@@ -662,24 +776,46 @@
 
 ```json
 {
-  "assetHash": "DA0376958828E31B772CA2BA7F73B1DE",
+  "assetHash": "9D8662BECC4608351C64916751988357",
   "bundlerCallsAfterFirstStage": 1,
   "bundlerCallsAfterSecondStage": 2,
   "rebuiltOnSecondStage": true,
-  "firstTreeHash": "3b5973f33b7a144c53581f4f922e313dc84d5fc4001bc3d69908098dae432ae6",
-  "secondTreeHash": "3b5973f33b7a144c53581f4f922e313dc84d5fc4001bc3d69908098dae432ae6",
+  "firstTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
+  "secondTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
   "artifactsIdentical": true,
   "newScratchDirs": 0
 }
 ```
 </details>
 
-<details><summary><b>buildkit-local-output</b> — skipped</summary>
+<details><summary><b>buildkit-local-output</b> — pass</summary>
 
 ```json
 {
-  "gate": "gated: pass --allow-buildkit to run buildkit-endpoint scenarios",
-  "probe": "buildctl not found (set BUILDCTL=/path/to/buildctl); BUILDKIT_ADDR=<unset>"
+  "assetHash": "F8F193C27F9E13B31A3B3C1CD5479836",
+  "bundlerCallsAfterFirstStage": 1,
+  "bundlerCallsAfterSecondStage": 2,
+  "rebuiltOnSecondStage": true,
+  "firstTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+  "secondTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+  "artifactsIdentical": true,
+  "newScratchDirs": 0
+}
+```
+</details>
+
+<details><summary><b>buildkit-docker-daemon</b> — pass</summary>
+
+```json
+{
+  "assetHash": "D291A7AA1E31550B0BD4F959B1F2E0CD",
+  "bundlerCallsAfterFirstStage": 1,
+  "bundlerCallsAfterSecondStage": 2,
+  "rebuiltOnSecondStage": true,
+  "firstTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+  "secondTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+  "artifactsIdentical": true,
+  "newScratchDirs": 0
 }
 ```
 </details>
@@ -690,10 +826,10 @@
 
 ```json
 {
-  "assetHash": "70F81E588AAEDF01A5A99223D74F68B6",
+  "assetHash": "8221A08D66B878D10C8804330DBA2CF4",
   "bundlerCalls": 2,
-  "firstBuildInfo": "build-1-1789696261385-0.4763607377820288",
-  "secondBuildInfo": "build-2-1789696261388-0.8642240496520329",
+  "firstBuildInfo": "build-1-1789696839410-0.057791492725324245",
+  "secondBuildInfo": "build-2-1789696839413-0.20377485322931843",
   "artifactsIdentical": false,
   "sameIdentityDifferentBytes": true,
   "newScratchDirs": 0
@@ -705,10 +841,10 @@
 
 ```json
 {
-  "assetHash": "A244C8B476D47985B6DDE5C38489645F",
+  "assetHash": "CEA708CE24F536E9F057614F18DF77DC",
   "bundlerCalls": 2,
-  "firstBuildInfo": "build-1-1789696261491-0.8263435919145493",
-  "secondBuildInfo": "build-2-1789696261492-0.7622519496735519",
+  "firstBuildInfo": "build-1-1789696839516-0.31432609753081864",
+  "secondBuildInfo": "build-2-1789696839518-0.4183443855828719",
   "artifactsIdentical": false,
   "sameIdentityDifferentBytes": true,
   "newScratchDirs": 0
@@ -720,10 +856,10 @@
 
 ```json
 {
-  "assetHash": "E33B6CAA4B5240CE4BD9855416D9D42A",
+  "assetHash": "58C364C9826EBFD628E3F01767DC2690",
   "bundlerCalls": 2,
-  "firstBuildInfo": "build-1-1789696261984-0.6075211219417157",
-  "secondBuildInfo": "build-2-1789696262063-0.7894089905074243",
+  "firstBuildInfo": "build-1-1789696839983-0.21221495291063863",
+  "secondBuildInfo": "build-2-1789696840053-0.5517095106040205",
   "artifactsIdentical": false,
   "sameIdentityDifferentBytes": true,
   "newScratchDirs": 0
@@ -735,10 +871,10 @@
 
 ```json
 {
-  "assetHash": "323BC80B212CB1CE449B7529EC281E9E",
+  "assetHash": "89E5E781F8E768C235360157CA9DF888",
   "bundlerCalls": 2,
-  "firstBuildInfo": "build-1-1789696263090-0.7364526899040489",
-  "secondBuildInfo": "build-2-1789696263175-0.6545158406097346",
+  "firstBuildInfo": "build-1-1789696841024-0.02427551026968422",
+  "secondBuildInfo": "build-2-1789696841086-0.3834833992324075",
   "artifactsIdentical": false,
   "sameIdentityDifferentBytes": true,
   "newScratchDirs": 0
@@ -750,10 +886,10 @@
 
 ```json
 {
-  "assetHash": "B31DF9041C6C109772FA34116798692D",
+  "assetHash": "46C2A69E78A7236BD96D6A0AFB121010",
   "bundlerCalls": 2,
-  "firstBuildInfo": "build-1-1789696298554-0.15202245822767435",
-  "secondBuildInfo": "build-2-1789696298872-0.6465766582079326",
+  "firstBuildInfo": "build-1-1789696860534-0.4677671694487088",
+  "secondBuildInfo": "build-2-1789696860842-0.2053920257007572",
   "artifactsIdentical": false,
   "sameIdentityDifferentBytes": true,
   "newScratchDirs": 0
@@ -765,10 +901,10 @@
 
 ```json
 {
-  "assetHash": "5A960A3B407149409AEDA240F87FF0F2",
+  "assetHash": "543D01349E4910E4C2768A6CB1881A20",
   "bundlerCalls": 2,
-  "firstBuildInfo": "build-1-1789696276841-0.42396191475540446",
-  "secondBuildInfo": "build-2-1789696277139-0.29298254027119",
+  "firstBuildInfo": "build-1-1789696843853-0.23603565987091635",
+  "secondBuildInfo": "build-2-1789696844132-0.2761373157694582",
   "artifactsIdentical": false,
   "sameIdentityDifferentBytes": true,
   "newScratchDirs": 0
@@ -780,10 +916,10 @@
 
 ```json
 {
-  "assetHash": "8A66F1408386F4CAB84142F3C5490087",
+  "assetHash": "348B7196D7AD5685C70355B69263F8C9",
   "bundlerCalls": 2,
-  "firstBuildInfo": "build-1-1789696289582-0.21878911372630672",
-  "secondBuildInfo": "build-2-1789696290317-0.059975644229793845",
+  "firstBuildInfo": "build-1-1789696851524-0.2671717933786186",
+  "secondBuildInfo": "build-2-1789696852261-0.5061010479273483",
   "artifactsIdentical": false,
   "sameIdentityDifferentBytes": true,
   "newScratchDirs": 0
@@ -791,12 +927,32 @@
 ```
 </details>
 
-<details><summary><b>buildkit-local-output</b> — skipped</summary>
+<details><summary><b>buildkit-local-output</b> — pass</summary>
 
 ```json
 {
-  "gate": "gated: pass --allow-buildkit to run buildkit-endpoint scenarios",
-  "probe": "buildctl not found (set BUILDCTL=/path/to/buildctl); BUILDKIT_ADDR=<unset>"
+  "assetHash": "B812B6514E45F358DDB60AC613F467BD",
+  "bundlerCalls": 2,
+  "firstBuildInfo": "build-1-1789696867075-0.9072878948579711",
+  "secondBuildInfo": "build-2-1789696867584-0.9814350178757415",
+  "artifactsIdentical": false,
+  "sameIdentityDifferentBytes": true,
+  "newScratchDirs": 0
+}
+```
+</details>
+
+<details><summary><b>buildkit-docker-daemon</b> — pass</summary>
+
+```json
+{
+  "assetHash": "3F8C739AD51B600E8AA85D2D53D6EB2B",
+  "bundlerCalls": 2,
+  "firstBuildInfo": "build-1-1789697041097-0.776088364174119",
+  "secondBuildInfo": "build-2-1789697041325-0.010088343317694703",
+  "artifactsIdentical": false,
+  "sameIdentityDifferentBytes": true,
+  "newScratchDirs": 0
 }
 ```
 </details>
@@ -807,24 +963,24 @@
 
 ```json
 {
-  "assetHash": "59D47EA9E5304F5ACB318416F4E066B9",
-  "declaredAssetPath": "assets/file/59D47EA9E5304F5ACB318416F4E066B9",
+  "assetHash": "071E01E57EB7516D3C1AAB3A84D6C5A3",
+  "declaredAssetPath": "assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3",
   "bundlerCallsAfterFirstSynth": 1,
   "bundlerCallsAfterSecondSynth": 2,
   "rebuiltOnSecondSynth": true,
   "emittedAssetFiles": [
-    "stacks/stack-synth/assets/file/59D47EA9E5304F5ACB318416F4E066B9/dist/BUILT",
-    "stacks/stack-synth/assets/file/59D47EA9E5304F5ACB318416F4E066B9/dist/COPY.txt",
-    "stacks/stack-synth/assets/file/59D47EA9E5304F5ACB318416F4E066B9/dist/Dockerfile.bundle",
-    "stacks/stack-synth/assets/file/59D47EA9E5304F5ACB318416F4E066B9/dist/excludeme.txt",
-    "stacks/stack-synth/assets/file/59D47EA9E5304F5ACB318416F4E066B9/dist/index.ts",
-    "stacks/stack-synth/assets/file/59D47EA9E5304F5ACB318416F4E066B9/dist/lib/dep.ts",
-    "stacks/stack-synth/assets/file/59D47EA9E5304F5ACB318416F4E066B9/dist/package.json",
-    "stacks/stack-synth/assets/file/59D47EA9E5304F5ACB318416F4E066B9/dist/second.ts",
-    "stacks/stack-synth/assets/file/59D47EA9E5304F5ACB318416F4E066B9/leftover.txt"
+    "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/dist/BUILT",
+    "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/dist/COPY.txt",
+    "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/dist/Dockerfile.bundle",
+    "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/dist/excludeme.txt",
+    "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/dist/index.ts",
+    "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/dist/lib/dep.ts",
+    "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/dist/package.json",
+    "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/dist/second.ts",
+    "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/leftover.txt"
   ],
-  "firstSynthOutdirHash": "a5f7f8b7caf52943233fb264e6e9782b47a08cd91e379ec3f0db1bd73b5a71ed",
-  "secondSynthOutdirHash": "a5f7f8b7caf52943233fb264e6e9782b47a08cd91e379ec3f0db1bd73b5a71ed",
+  "firstSynthOutdirHash": "c9cbf536fdfbfbdf8a25a16f45ce865e0e731c247da164b529f9d23bc8c11d0b",
+  "secondSynthOutdirHash": "c9cbf536fdfbfbdf8a25a16f45ce865e0e731c247da164b529f9d23bc8c11d0b",
   "identicalAcrossSynths": true,
   "newScratchDirs": 0
 }
@@ -895,22 +1051,22 @@
 
 ```json
 {
-  "assetHash": "827852C127D9BFF7BB5DE25AC8A3276E",
-  "declaredAssetPath": "assets/file/827852C127D9BFF7BB5DE25AC8A3276E",
+  "assetHash": "EE710F8A4C48218A4C8CB42AB22D42A3",
+  "declaredAssetPath": "assets/file/EE710F8A4C48218A4C8CB42AB22D42A3",
   "bundlerCallsAfterFirstSynth": 1,
   "bundlerCallsAfterSecondSynth": 2,
   "rebuiltOnSecondSynth": true,
   "emittedAssetFiles": [
-    "stacks/stack-synth/assets/file/827852C127D9BFF7BB5DE25AC8A3276E/dist/COPY.txt",
-    "stacks/stack-synth/assets/file/827852C127D9BFF7BB5DE25AC8A3276E/dist/Dockerfile.bundle",
-    "stacks/stack-synth/assets/file/827852C127D9BFF7BB5DE25AC8A3276E/dist/excludeme.txt",
-    "stacks/stack-synth/assets/file/827852C127D9BFF7BB5DE25AC8A3276E/dist/index.ts",
-    "stacks/stack-synth/assets/file/827852C127D9BFF7BB5DE25AC8A3276E/dist/lib/dep.ts",
-    "stacks/stack-synth/assets/file/827852C127D9BFF7BB5DE25AC8A3276E/dist/package.json",
-    "stacks/stack-synth/assets/file/827852C127D9BFF7BB5DE25AC8A3276E/dist/second.ts"
+    "stacks/stack-synth/assets/file/EE710F8A4C48218A4C8CB42AB22D42A3/dist/COPY.txt",
+    "stacks/stack-synth/assets/file/EE710F8A4C48218A4C8CB42AB22D42A3/dist/Dockerfile.bundle",
+    "stacks/stack-synth/assets/file/EE710F8A4C48218A4C8CB42AB22D42A3/dist/excludeme.txt",
+    "stacks/stack-synth/assets/file/EE710F8A4C48218A4C8CB42AB22D42A3/dist/index.ts",
+    "stacks/stack-synth/assets/file/EE710F8A4C48218A4C8CB42AB22D42A3/dist/lib/dep.ts",
+    "stacks/stack-synth/assets/file/EE710F8A4C48218A4C8CB42AB22D42A3/dist/package.json",
+    "stacks/stack-synth/assets/file/EE710F8A4C48218A4C8CB42AB22D42A3/dist/second.ts"
   ],
-  "firstSynthOutdirHash": "3b0d7d5424a5cd7ad3dcf9f9a90a57a2e81f197b2afe928aef07a18273e8ee16",
-  "secondSynthOutdirHash": "3b0d7d5424a5cd7ad3dcf9f9a90a57a2e81f197b2afe928aef07a18273e8ee16",
+  "firstSynthOutdirHash": "d30167bac754bfd84e9b3c048a950ab01a58ebd57d3688c7f7cd725bbe0871ae",
+  "secondSynthOutdirHash": "d30167bac754bfd84e9b3c048a950ab01a58ebd57d3688c7f7cd725bbe0871ae",
   "identicalAcrossSynths": true,
   "newScratchDirs": 0
 }
@@ -921,23 +1077,23 @@
 
 ```json
 {
-  "assetHash": "E870586E22427A6545386491E54B5052",
-  "declaredAssetPath": "assets/file/E870586E22427A6545386491E54B5052",
+  "assetHash": "42D004958213F4F567A25444957CF47D",
+  "declaredAssetPath": "assets/file/42D004958213F4F567A25444957CF47D",
   "bundlerCallsAfterFirstSynth": 1,
   "bundlerCallsAfterSecondSynth": 2,
   "rebuiltOnSecondSynth": true,
   "emittedAssetFiles": [
-    "stacks/stack-synth/assets/file/E870586E22427A6545386491E54B5052/dist/BUILT",
-    "stacks/stack-synth/assets/file/E870586E22427A6545386491E54B5052/dist/COPY.txt",
-    "stacks/stack-synth/assets/file/E870586E22427A6545386491E54B5052/dist/Dockerfile.bundle",
-    "stacks/stack-synth/assets/file/E870586E22427A6545386491E54B5052/dist/excludeme.txt",
-    "stacks/stack-synth/assets/file/E870586E22427A6545386491E54B5052/dist/index.ts",
-    "stacks/stack-synth/assets/file/E870586E22427A6545386491E54B5052/dist/lib/dep.ts",
-    "stacks/stack-synth/assets/file/E870586E22427A6545386491E54B5052/dist/package.json",
-    "stacks/stack-synth/assets/file/E870586E22427A6545386491E54B5052/dist/second.ts"
+    "stacks/stack-synth/assets/file/42D004958213F4F567A25444957CF47D/dist/BUILT",
+    "stacks/stack-synth/assets/file/42D004958213F4F567A25444957CF47D/dist/COPY.txt",
+    "stacks/stack-synth/assets/file/42D004958213F4F567A25444957CF47D/dist/Dockerfile.bundle",
+    "stacks/stack-synth/assets/file/42D004958213F4F567A25444957CF47D/dist/excludeme.txt",
+    "stacks/stack-synth/assets/file/42D004958213F4F567A25444957CF47D/dist/index.ts",
+    "stacks/stack-synth/assets/file/42D004958213F4F567A25444957CF47D/dist/lib/dep.ts",
+    "stacks/stack-synth/assets/file/42D004958213F4F567A25444957CF47D/dist/package.json",
+    "stacks/stack-synth/assets/file/42D004958213F4F567A25444957CF47D/dist/second.ts"
   ],
-  "firstSynthOutdirHash": "52b6b3a56fc99f7238961532215e6789e11bf0ec3df35ff4415f08f46bf35eb3",
-  "secondSynthOutdirHash": "52b6b3a56fc99f7238961532215e6789e11bf0ec3df35ff4415f08f46bf35eb3",
+  "firstSynthOutdirHash": "62e283708c78fa5837446e52aedb3aaca4f76d2133ce2bca1eb2c677629135c5",
+  "secondSynthOutdirHash": "62e283708c78fa5837446e52aedb3aaca4f76d2133ce2bca1eb2c677629135c5",
   "identicalAcrossSynths": true,
   "newScratchDirs": 0
 }
@@ -948,35 +1104,79 @@
 
 ```json
 {
-  "assetHash": "DA0376958828E31B772CA2BA7F73B1DE",
-  "declaredAssetPath": "assets/file/DA0376958828E31B772CA2BA7F73B1DE",
+  "assetHash": "9D8662BECC4608351C64916751988357",
+  "declaredAssetPath": "assets/file/9D8662BECC4608351C64916751988357",
   "bundlerCallsAfterFirstSynth": 1,
   "bundlerCallsAfterSecondSynth": 2,
   "rebuiltOnSecondSynth": true,
   "emittedAssetFiles": [
-    "stacks/stack-synth/assets/file/DA0376958828E31B772CA2BA7F73B1DE/dist/BUILT",
-    "stacks/stack-synth/assets/file/DA0376958828E31B772CA2BA7F73B1DE/dist/COPY.txt",
-    "stacks/stack-synth/assets/file/DA0376958828E31B772CA2BA7F73B1DE/dist/Dockerfile.bundle",
-    "stacks/stack-synth/assets/file/DA0376958828E31B772CA2BA7F73B1DE/dist/excludeme.txt",
-    "stacks/stack-synth/assets/file/DA0376958828E31B772CA2BA7F73B1DE/dist/index.ts",
-    "stacks/stack-synth/assets/file/DA0376958828E31B772CA2BA7F73B1DE/dist/lib/dep.ts",
-    "stacks/stack-synth/assets/file/DA0376958828E31B772CA2BA7F73B1DE/dist/package.json",
-    "stacks/stack-synth/assets/file/DA0376958828E31B772CA2BA7F73B1DE/dist/second.ts"
+    "stacks/stack-synth/assets/file/9D8662BECC4608351C64916751988357/dist/BUILT",
+    "stacks/stack-synth/assets/file/9D8662BECC4608351C64916751988357/dist/COPY.txt",
+    "stacks/stack-synth/assets/file/9D8662BECC4608351C64916751988357/dist/Dockerfile.bundle",
+    "stacks/stack-synth/assets/file/9D8662BECC4608351C64916751988357/dist/excludeme.txt",
+    "stacks/stack-synth/assets/file/9D8662BECC4608351C64916751988357/dist/index.ts",
+    "stacks/stack-synth/assets/file/9D8662BECC4608351C64916751988357/dist/lib/dep.ts",
+    "stacks/stack-synth/assets/file/9D8662BECC4608351C64916751988357/dist/package.json",
+    "stacks/stack-synth/assets/file/9D8662BECC4608351C64916751988357/dist/second.ts"
   ],
-  "firstSynthOutdirHash": "4527e2b4113a3ce05fc234cc57cda49456f0bf58b1b1a587185b17688293d526",
-  "secondSynthOutdirHash": "4527e2b4113a3ce05fc234cc57cda49456f0bf58b1b1a587185b17688293d526",
+  "firstSynthOutdirHash": "29c48d091503c5d1d61d6ef639d9b53d8ec86fb8fe852eeb2a69ee51185efbd8",
+  "secondSynthOutdirHash": "29c48d091503c5d1d61d6ef639d9b53d8ec86fb8fe852eeb2a69ee51185efbd8",
   "identicalAcrossSynths": true,
   "newScratchDirs": 0
 }
 ```
 </details>
 
-<details><summary><b>buildkit-local-output</b> — skipped</summary>
+<details><summary><b>buildkit-local-output</b> — pass</summary>
 
 ```json
 {
-  "gate": "gated: pass --allow-buildkit to run buildkit-endpoint scenarios",
-  "probe": "buildctl not found (set BUILDCTL=/path/to/buildctl); BUILDKIT_ADDR=<unset>"
+  "assetHash": "F8F193C27F9E13B31A3B3C1CD5479836",
+  "declaredAssetPath": "assets/file/F8F193C27F9E13B31A3B3C1CD5479836",
+  "bundlerCallsAfterFirstSynth": 1,
+  "bundlerCallsAfterSecondSynth": 2,
+  "rebuiltOnSecondSynth": true,
+  "emittedAssetFiles": [
+    "stacks/stack-synth/assets/file/F8F193C27F9E13B31A3B3C1CD5479836/BUILT",
+    "stacks/stack-synth/assets/file/F8F193C27F9E13B31A3B3C1CD5479836/COPY.txt",
+    "stacks/stack-synth/assets/file/F8F193C27F9E13B31A3B3C1CD5479836/Dockerfile.bundle",
+    "stacks/stack-synth/assets/file/F8F193C27F9E13B31A3B3C1CD5479836/excludeme.txt",
+    "stacks/stack-synth/assets/file/F8F193C27F9E13B31A3B3C1CD5479836/index.ts",
+    "stacks/stack-synth/assets/file/F8F193C27F9E13B31A3B3C1CD5479836/lib/dep.ts",
+    "stacks/stack-synth/assets/file/F8F193C27F9E13B31A3B3C1CD5479836/package.json",
+    "stacks/stack-synth/assets/file/F8F193C27F9E13B31A3B3C1CD5479836/second.ts"
+  ],
+  "firstSynthOutdirHash": "34981b7479e0a080f447db4442e031a01d818255353492c6ff9122c50598927d",
+  "secondSynthOutdirHash": "34981b7479e0a080f447db4442e031a01d818255353492c6ff9122c50598927d",
+  "identicalAcrossSynths": true,
+  "newScratchDirs": 0
+}
+```
+</details>
+
+<details><summary><b>buildkit-docker-daemon</b> — pass</summary>
+
+```json
+{
+  "assetHash": "D291A7AA1E31550B0BD4F959B1F2E0CD",
+  "declaredAssetPath": "assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD",
+  "bundlerCallsAfterFirstSynth": 1,
+  "bundlerCallsAfterSecondSynth": 2,
+  "rebuiltOnSecondSynth": true,
+  "emittedAssetFiles": [
+    "stacks/stack-synth/assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD/BUILT",
+    "stacks/stack-synth/assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD/COPY.txt",
+    "stacks/stack-synth/assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD/Dockerfile.bundle",
+    "stacks/stack-synth/assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD/excludeme.txt",
+    "stacks/stack-synth/assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD/index.ts",
+    "stacks/stack-synth/assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD/lib/dep.ts",
+    "stacks/stack-synth/assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD/package.json",
+    "stacks/stack-synth/assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD/second.ts"
+  ],
+  "firstSynthOutdirHash": "d5c19e3aa9d3fd238091fb7323432b946cf036549cd85c5076fd5b8ff92ebe9a",
+  "secondSynthOutdirHash": "d5c19e3aa9d3fd238091fb7323432b946cf036549cd85c5076fd5b8ff92ebe9a",
+  "identicalAcrossSynths": true,
+  "newScratchDirs": 0
 }
 ```
 </details>
@@ -1074,12 +1274,28 @@
 ```
 </details>
 
-<details><summary><b>buildkit-local-output</b> — skipped</summary>
+<details><summary><b>buildkit-local-output</b> — pass</summary>
 
 ```json
 {
-  "gate": "gated: pass --allow-buildkit to run buildkit-endpoint scenarios",
-  "probe": "buildctl not found (set BUILDCTL=/path/to/buildctl); BUILDKIT_ADDR=<unset>"
+  "rejectedAtConstruction": true,
+  "error": "TerraformAsset Staging was configured with a 'bundler' and file packaging (AssetType.FILE). A bundler produces a directory of output, which cannot be staged as a single file.",
+  "adapterProducesArchive": false,
+  "bundlerRanBeforeRejection": false,
+  "newScratchDirs": 0
+}
+```
+</details>
+
+<details><summary><b>buildkit-docker-daemon</b> — pass</summary>
+
+```json
+{
+  "rejectedAtConstruction": true,
+  "error": "TerraformAsset Staging was configured with a 'bundler' and file packaging (AssetType.FILE). A bundler produces a directory of output, which cannot be staged as a single file.",
+  "adapterProducesArchive": false,
+  "bundlerRanBeforeRejection": false,
+  "newScratchDirs": 0
 }
 ```
 </details>
@@ -1093,7 +1309,7 @@
   "errorPropagated": true,
   "error": "harness: bundler failed after writing output",
   "scratchDirsLeftInProcess": 1,
-  "scratchBytesLeftInProcess": 484,
+  "scratchBytesLeftInProcess": 542,
   "note": "registered scratch is reclaimed only by the process-exit sweep (see lifecycle/scratch-after-exit)",
   "newScratchDirs": 1
 }
@@ -1149,7 +1365,7 @@
   "errorPropagated": true,
   "error": "harness: bundler failed after writing output",
   "scratchDirsLeftInProcess": 1,
-  "scratchBytesLeftInProcess": 472,
+  "scratchBytesLeftInProcess": 530,
   "note": "registered scratch is reclaimed only by the process-exit sweep (see lifecycle/scratch-after-exit)",
   "newScratchDirs": 1
 }
@@ -1163,7 +1379,7 @@
   "errorPropagated": true,
   "error": "harness: bundler failed after writing output",
   "scratchDirsLeftInProcess": 1,
-  "scratchBytesLeftInProcess": 491,
+  "scratchBytesLeftInProcess": 549,
   "note": "registered scratch is reclaimed only by the process-exit sweep (see lifecycle/scratch-after-exit)",
   "newScratchDirs": 1
 }
@@ -1177,19 +1393,37 @@
   "errorPropagated": true,
   "error": "harness: bundler failed after writing output",
   "scratchDirsLeftInProcess": 1,
-  "scratchBytesLeftInProcess": 491,
+  "scratchBytesLeftInProcess": 549,
   "note": "registered scratch is reclaimed only by the process-exit sweep (see lifecycle/scratch-after-exit)",
   "newScratchDirs": 1
 }
 ```
 </details>
 
-<details><summary><b>buildkit-local-output</b> — skipped</summary>
+<details><summary><b>buildkit-local-output</b> — pass</summary>
 
 ```json
 {
-  "gate": "gated: pass --allow-buildkit to run buildkit-endpoint scenarios",
-  "probe": "buildctl not found (set BUILDCTL=/path/to/buildctl); BUILDKIT_ADDR=<unset>"
+  "errorPropagated": true,
+  "error": "harness: bundler failed after writing output",
+  "scratchDirsLeftInProcess": 1,
+  "scratchBytesLeftInProcess": 548,
+  "note": "registered scratch is reclaimed only by the process-exit sweep (see lifecycle/scratch-after-exit)",
+  "newScratchDirs": 1
+}
+```
+</details>
+
+<details><summary><b>buildkit-docker-daemon</b> — pass</summary>
+
+```json
+{
+  "errorPropagated": true,
+  "error": "harness: bundler failed after writing output",
+  "scratchDirsLeftInProcess": 1,
+  "scratchBytesLeftInProcess": 548,
+  "note": "registered scratch is reclaimed only by the process-exit sweep (see lifecycle/scratch-after-exit)",
+  "newScratchDirs": 1
 }
 ```
 </details>
@@ -1201,8 +1435,8 @@
 ```json
 {
   "excludedFileShippedInArtifact": true,
-  "hashBefore": "2A4F51FAABECD54A8E1A3045AA908E64",
-  "hashAfterExcludedChange": "2A4F51FAABECD54A8E1A3045AA908E64",
+  "hashBefore": "D74B76B749465E83AD29C0B803B7A135",
+  "hashAfterExcludedChange": "D74B76B749465E83AD29C0B803B7A135",
   "hashUnchangedDespiteExcludedChange": true,
   "artifactChanged": true,
   "newScratchDirs": 0
@@ -1215,8 +1449,8 @@
 ```json
 {
   "excludedFileShippedInArtifact": false,
-  "hashBefore": "4F6B68515708C397EAA88CC4335E74EA",
-  "hashAfterExcludedChange": "4F6B68515708C397EAA88CC4335E74EA",
+  "hashBefore": "ED96F3944422144284C3E0DCEC79965F",
+  "hashAfterExcludedChange": "ED96F3944422144284C3E0DCEC79965F",
   "hashUnchangedDespiteExcludedChange": true,
   "artifactChanged": false,
   "newScratchDirs": 0
@@ -1229,8 +1463,8 @@
 ```json
 {
   "excludedFileShippedInArtifact": false,
-  "hashBefore": "FC435F2E7DEF75353310AE652268E9E8",
-  "hashAfterExcludedChange": "FC435F2E7DEF75353310AE652268E9E8",
+  "hashBefore": "2FD509049B928636AADB878AC2B36539",
+  "hashAfterExcludedChange": "2FD509049B928636AADB878AC2B36539",
   "hashUnchangedDespiteExcludedChange": true,
   "artifactChanged": false,
   "newScratchDirs": 0
@@ -1243,8 +1477,8 @@
 ```json
 {
   "excludedFileShippedInArtifact": false,
-  "hashBefore": "5D0769E3DF45046D047A7854EA4E187D",
-  "hashAfterExcludedChange": "5D0769E3DF45046D047A7854EA4E187D",
+  "hashBefore": "30E1D2A01437B8300F3CDC06A1C9D94B",
+  "hashAfterExcludedChange": "30E1D2A01437B8300F3CDC06A1C9D94B",
   "hashUnchangedDespiteExcludedChange": true,
   "artifactChanged": false,
   "newScratchDirs": 0
@@ -1257,8 +1491,8 @@
 ```json
 {
   "excludedFileShippedInArtifact": true,
-  "hashBefore": "E3DDC385C7CA5A35C1D9B1CE752F1A2F",
-  "hashAfterExcludedChange": "E3DDC385C7CA5A35C1D9B1CE752F1A2F",
+  "hashBefore": "FC5D20BBDE3D4BDFE31D3A8D519AA309",
+  "hashAfterExcludedChange": "FC5D20BBDE3D4BDFE31D3A8D519AA309",
   "hashUnchangedDespiteExcludedChange": true,
   "artifactChanged": true,
   "newScratchDirs": 0
@@ -1271,8 +1505,8 @@
 ```json
 {
   "excludedFileShippedInArtifact": true,
-  "hashBefore": "5C8CF80D7E27D3F20B1B8EBDF9329890",
-  "hashAfterExcludedChange": "5C8CF80D7E27D3F20B1B8EBDF9329890",
+  "hashBefore": "4158E797C3DC5629E045E3887646268D",
+  "hashAfterExcludedChange": "4158E797C3DC5629E045E3887646268D",
   "hashUnchangedDespiteExcludedChange": true,
   "artifactChanged": true,
   "newScratchDirs": 0
@@ -1285,8 +1519,8 @@
 ```json
 {
   "excludedFileShippedInArtifact": true,
-  "hashBefore": "F0ADD2250B61A1ACEAA17BB44AA4A913",
-  "hashAfterExcludedChange": "F0ADD2250B61A1ACEAA17BB44AA4A913",
+  "hashBefore": "5DAFC0A5B89D4670BD6F4A37835CFCFE",
+  "hashAfterExcludedChange": "5DAFC0A5B89D4670BD6F4A37835CFCFE",
   "hashUnchangedDespiteExcludedChange": true,
   "artifactChanged": true,
   "newScratchDirs": 0
@@ -1294,12 +1528,30 @@
 ```
 </details>
 
-<details><summary><b>buildkit-local-output</b> — skipped</summary>
+<details><summary><b>buildkit-local-output</b> — pass</summary>
 
 ```json
 {
-  "gate": "gated: pass --allow-buildkit to run buildkit-endpoint scenarios",
-  "probe": "buildctl not found (set BUILDCTL=/path/to/buildctl); BUILDKIT_ADDR=<unset>"
+  "excludedFileShippedInArtifact": true,
+  "hashBefore": "1F1D53FC21FD6940C942F50731DCEC82",
+  "hashAfterExcludedChange": "1F1D53FC21FD6940C942F50731DCEC82",
+  "hashUnchangedDespiteExcludedChange": true,
+  "artifactChanged": true,
+  "newScratchDirs": 0
+}
+```
+</details>
+
+<details><summary><b>buildkit-docker-daemon</b> — pass</summary>
+
+```json
+{
+  "excludedFileShippedInArtifact": true,
+  "hashBefore": "107196972CB67509A10A1567AADA9C53",
+  "hashAfterExcludedChange": "107196972CB67509A10A1567AADA9C53",
+  "hashUnchangedDespiteExcludedChange": true,
+  "artifactChanged": true,
+  "newScratchDirs": 0
 }
 ```
 </details>
@@ -1310,8 +1562,8 @@
 
 ```json
 {
-  "first": "59D47EA9E5304F5ACB318416F4E066B9",
-  "second": "59D47EA9E5304F5ACB318416F4E066B9",
+  "first": "071E01E57EB7516D3C1AAB3A84D6C5A3",
+  "second": "071E01E57EB7516D3C1AAB3A84D6C5A3",
   "assetHashesEqual": true,
   "artifactTreesEqual": true,
   "reproducible": true,
@@ -1366,8 +1618,8 @@
 
 ```json
 {
-  "first": "827852C127D9BFF7BB5DE25AC8A3276E",
-  "second": "827852C127D9BFF7BB5DE25AC8A3276E",
+  "first": "EE710F8A4C48218A4C8CB42AB22D42A3",
+  "second": "EE710F8A4C48218A4C8CB42AB22D42A3",
   "assetHashesEqual": true,
   "artifactTreesEqual": true,
   "reproducible": true,
@@ -1380,8 +1632,8 @@
 
 ```json
 {
-  "first": "E870586E22427A6545386491E54B5052",
-  "second": "E870586E22427A6545386491E54B5052",
+  "first": "42D004958213F4F567A25444957CF47D",
+  "second": "42D004958213F4F567A25444957CF47D",
   "assetHashesEqual": true,
   "artifactTreesEqual": true,
   "reproducible": true,
@@ -1394,8 +1646,8 @@
 
 ```json
 {
-  "first": "DA0376958828E31B772CA2BA7F73B1DE",
-  "second": "DA0376958828E31B772CA2BA7F73B1DE",
+  "first": "9D8662BECC4608351C64916751988357",
+  "second": "9D8662BECC4608351C64916751988357",
   "assetHashesEqual": true,
   "artifactTreesEqual": true,
   "reproducible": true,
@@ -1404,12 +1656,30 @@
 ```
 </details>
 
-<details><summary><b>buildkit-local-output</b> — skipped</summary>
+<details><summary><b>buildkit-local-output</b> — pass</summary>
 
 ```json
 {
-  "gate": "gated: pass --allow-buildkit to run buildkit-endpoint scenarios",
-  "probe": "buildctl not found (set BUILDCTL=/path/to/buildctl); BUILDKIT_ADDR=<unset>"
+  "first": "F8F193C27F9E13B31A3B3C1CD5479836",
+  "second": "F8F193C27F9E13B31A3B3C1CD5479836",
+  "assetHashesEqual": true,
+  "artifactTreesEqual": true,
+  "reproducible": true,
+  "newScratchDirs": 0
+}
+```
+</details>
+
+<details><summary><b>buildkit-docker-daemon</b> — pass</summary>
+
+```json
+{
+  "first": "D291A7AA1E31550B0BD4F959B1F2E0CD",
+  "second": "D291A7AA1E31550B0BD4F959B1F2E0CD",
+  "assetHashesEqual": true,
+  "artifactTreesEqual": true,
+  "reproducible": true,
+  "newScratchDirs": 0
 }
 ```
 </details>
@@ -1421,10 +1691,10 @@
 ```json
 {
   "adapterBundlerKey": "tcons-local::236ff636f0f4e2a2",
-  "node18Hash": "ECB740443DE14BF173EF046200FAD552",
-  "node20Hash": "0ABC5FDECECADC3DD19CA735F21BB365",
+  "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+  "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
   "identityFollowsBundlerKey": true,
-  "hashWithoutBundlerKey": "1B4AEBC3009EEA60F567C442C6E85551",
+  "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
   "newScratchDirs": 0
 }
 ```
@@ -1435,10 +1705,10 @@
 ```json
 {
   "adapterBundlerKey": "tcons-nodejs::539d460f70f3c469",
-  "node18Hash": "ECB740443DE14BF173EF046200FAD552",
-  "node20Hash": "0ABC5FDECECADC3DD19CA735F21BB365",
+  "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+  "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
   "identityFollowsBundlerKey": true,
-  "hashWithoutBundlerKey": "1B4AEBC3009EEA60F567C442C6E85551",
+  "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
   "newScratchDirs": 0
 }
 ```
@@ -1449,10 +1719,10 @@
 ```json
 {
   "adapterBundlerKey": "rolldown::node24::dir::true",
-  "node18Hash": "ECB740443DE14BF173EF046200FAD552",
-  "node20Hash": "0ABC5FDECECADC3DD19CA735F21BB365",
+  "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+  "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
   "identityFollowsBundlerKey": true,
-  "hashWithoutBundlerKey": "1B4AEBC3009EEA60F567C442C6E85551",
+  "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
   "newScratchDirs": 0
 }
 ```
@@ -1463,10 +1733,10 @@
 ```json
 {
   "adapterBundlerKey": "rolldown::node24::zip::true",
-  "node18Hash": "ECB740443DE14BF173EF046200FAD552",
-  "node20Hash": "0ABC5FDECECADC3DD19CA735F21BB365",
+  "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+  "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
   "identityFollowsBundlerKey": true,
-  "hashWithoutBundlerKey": "1B4AEBC3009EEA60F567C442C6E85551",
+  "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
   "newScratchDirs": 0
 }
 ```
@@ -1477,10 +1747,10 @@
 ```json
 {
   "adapterBundlerKey": "tcons-chain::tcons-local::c900e62f514cdd9f",
-  "node18Hash": "ECB740443DE14BF173EF046200FAD552",
-  "node20Hash": "0ABC5FDECECADC3DD19CA735F21BB365",
+  "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+  "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
   "identityFollowsBundlerKey": true,
-  "hashWithoutBundlerKey": "1B4AEBC3009EEA60F567C442C6E85551",
+  "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
   "newScratchDirs": 0
 }
 ```
@@ -1491,10 +1761,10 @@
 ```json
 {
   "adapterBundlerKey": "tcons-docker::alpine::sh -c mkdir -p /asset-output/dist && cp -r /asset-input/. /asset-output/dist/ && printf 'built-in-container\\n' > /asset-output/dist/BUILT::BIND_MOUNT",
-  "node18Hash": "ECB740443DE14BF173EF046200FAD552",
-  "node20Hash": "0ABC5FDECECADC3DD19CA735F21BB365",
+  "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+  "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
   "identityFollowsBundlerKey": true,
-  "hashWithoutBundlerKey": "1B4AEBC3009EEA60F567C442C6E85551",
+  "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
   "newScratchDirs": 0
 }
 ```
@@ -1505,21 +1775,39 @@
 ```json
 {
   "adapterBundlerKey": "tcons-docker::alpine::sh -c mkdir -p /asset-output/dist && cp -r /asset-input/. /asset-output/dist/ && printf 'built-in-container\\n' > /asset-output/dist/BUILT::VOLUME_COPY",
-  "node18Hash": "ECB740443DE14BF173EF046200FAD552",
-  "node20Hash": "0ABC5FDECECADC3DD19CA735F21BB365",
+  "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+  "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
   "identityFollowsBundlerKey": true,
-  "hashWithoutBundlerKey": "1B4AEBC3009EEA60F567C442C6E85551",
+  "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
   "newScratchDirs": 0
 }
 ```
 </details>
 
-<details><summary><b>buildkit-local-output</b> — skipped</summary>
+<details><summary><b>buildkit-local-output</b> — pass</summary>
 
 ```json
 {
-  "gate": "gated: pass --allow-buildkit to run buildkit-endpoint scenarios",
-  "probe": "buildctl not found (set BUILDCTL=/path/to/buildctl); BUILDKIT_ADDR=<unset>"
+  "adapterBundlerKey": "buildkit::tcp://127.0.0.1:1234::Dockerfile.bundle",
+  "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+  "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
+  "identityFollowsBundlerKey": true,
+  "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
+  "newScratchDirs": 0
+}
+```
+</details>
+
+<details><summary><b>buildkit-docker-daemon</b> — pass</summary>
+
+```json
+{
+  "adapterBundlerKey": "buildx-docker::default::Dockerfile.bundle",
+  "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+  "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
+  "identityFollowsBundlerKey": true,
+  "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
+  "newScratchDirs": 0
 }
 ```
 </details>
@@ -1530,13 +1818,13 @@
 
 ```json
 {
-  "assetHash": "EE73EBE6EF9D7E1FF7C3E5E176618043",
+  "assetHash": "32666C153DA623136797174C19E8CBC2",
   "scratchDirsCreated": 1,
-  "scratchBytes": 8389092,
+  "scratchBytes": 8389150,
   "scratchDirs": [
     {
-      "dir": "/data/tmp/harness-tmp/cdktn-bundle-LUvdTz",
-      "bytes": 8389092
+      "dir": "/data/tmp/harness-tmp/cdktn-bundle-ns54TF",
+      "bytes": 8389150
     }
   ],
   "newScratchDirs": 1
@@ -1553,7 +1841,7 @@
   "scratchBytes": 8389785,
   "scratchDirs": [
     {
-      "dir": "/data/tmp/harness-tmp/cdktn-bundle-fHMK8E",
+      "dir": "/data/tmp/harness-tmp/cdktn-bundle-5aSKVT",
       "bytes": 8389785
     }
   ],
@@ -1571,7 +1859,7 @@
   "scratchBytes": 8388658,
   "scratchDirs": [
     {
-      "dir": "/data/tmp/harness-tmp/cdktn-bundle-JYDtef",
+      "dir": "/data/tmp/harness-tmp/cdktn-bundle-M9Dfnb",
       "bytes": 8388658
     }
   ],
@@ -1589,7 +1877,7 @@
   "scratchBytes": 8388776,
   "scratchDirs": [
     {
-      "dir": "/data/tmp/harness-tmp/cdktn-bundle-lfIarx",
+      "dir": "/data/tmp/harness-tmp/cdktn-bundle-l9eKH9",
       "bytes": 8388776
     }
   ],
@@ -1602,13 +1890,13 @@
 
 ```json
 {
-  "assetHash": "4779F5D02654222A4FB1489C1FD57F46",
+  "assetHash": "332D62BE5C70EA3C4511901E64649B0C",
   "scratchDirsCreated": 1,
-  "scratchBytes": 8389080,
+  "scratchBytes": 8389138,
   "scratchDirs": [
     {
-      "dir": "/data/tmp/harness-tmp/cdktn-bundle-hk56Xz",
-      "bytes": 8389080
+      "dir": "/data/tmp/harness-tmp/cdktn-bundle-rayPgo",
+      "bytes": 8389138
     }
   ],
   "newScratchDirs": 1
@@ -1620,13 +1908,13 @@
 
 ```json
 {
-  "assetHash": "CD95200EE165F15DE266FD85CCCB9A8E",
+  "assetHash": "A6EFCB910DB6E31B43CD5C09F2494E61",
   "scratchDirsCreated": 1,
-  "scratchBytes": 8389099,
+  "scratchBytes": 8389157,
   "scratchDirs": [
     {
-      "dir": "/data/tmp/harness-tmp/cdktn-bundle-40IE1X",
-      "bytes": 8389099
+      "dir": "/data/tmp/harness-tmp/cdktn-bundle-4MYT9q",
+      "bytes": 8389157
     }
   ],
   "newScratchDirs": 1
@@ -1638,13 +1926,13 @@
 
 ```json
 {
-  "assetHash": "DBAA147621A9DC375C78F5E04598BF5E",
+  "assetHash": "A34F8AACFEB24D63CAFA4A5ABD1A8CFE",
   "scratchDirsCreated": 1,
-  "scratchBytes": 8389099,
+  "scratchBytes": 8389157,
   "scratchDirs": [
     {
-      "dir": "/data/tmp/harness-tmp/cdktn-bundle-FAua9P",
-      "bytes": 8389099
+      "dir": "/data/tmp/harness-tmp/cdktn-bundle-pceBhw",
+      "bytes": 8389157
     }
   ],
   "newScratchDirs": 1
@@ -1652,12 +1940,38 @@
 ```
 </details>
 
-<details><summary><b>buildkit-local-output</b> — skipped</summary>
+<details><summary><b>buildkit-local-output</b> — pass</summary>
 
 ```json
 {
-  "gate": "gated: pass --allow-buildkit to run buildkit-endpoint scenarios",
-  "probe": "buildctl not found (set BUILDCTL=/path/to/buildctl); BUILDKIT_ADDR=<unset>"
+  "assetHash": "77C39E1D7ADAA88D30EA85EA658D9014",
+  "scratchDirsCreated": 1,
+  "scratchBytes": 8389156,
+  "scratchDirs": [
+    {
+      "dir": "/data/tmp/harness-tmp/cdktn-bundle-7k7H3A",
+      "bytes": 8389156
+    }
+  ],
+  "newScratchDirs": 1
+}
+```
+</details>
+
+<details><summary><b>buildkit-docker-daemon</b> — pass</summary>
+
+```json
+{
+  "assetHash": "B793D9A4598CA8A8F495468890057C86",
+  "scratchDirsCreated": 1,
+  "scratchBytes": 8389156,
+  "scratchDirs": [
+    {
+      "dir": "/data/tmp/harness-tmp/cdktn-bundle-KBlWmt",
+      "bytes": 8389156
+    }
+  ],
+  "newScratchDirs": 1
 }
 ```
 </details>

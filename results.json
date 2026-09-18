@@ -1,0 +1,1771 @@
+{
+  "generatedAt": "2026-09-18T02:00:41.662Z + 2026-09-18T02:00:46.686Z + 2026-09-18T02:00:58.196Z + 2026-09-18T02:01:03.415Z + 2026-09-18T02:01:11.939Z + 2026-09-18T02:04:03.978Z",
+  "prHeadSha": "98b39e49f6dd6bb5cc94ca30302d5928e7c836bb",
+  "cdktnLib": "/data/repos/hermes-pr-reviewer/worktrees/cdk-terrain/open-constructs__cdk-terrain/pr-442/packages/cdktn/lib/index.js",
+  "environment": {
+    "node": "v24.18.1",
+    "platform": "linux-x64",
+    "tmpdir": "/data/tmp/harness-tmp",
+    "docker": "Docker version 29.5.3, build d1c06ef",
+    "buildctl": "<unavailable>",
+    "buildkitAddr": "tcp://127.0.0.1:1234"
+  },
+  "results": [
+    {
+      "scenario": "stage/source-hash",
+      "adapter": "tcons-local",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 0,
+        "bundlerCallsAfterStage": 1,
+        "eagerBuild": false,
+        "assetHash": "0F94DB8EB14646CB6CF4B6BF111E24C6",
+        "stagedFiles": [
+          "dist/BUILT",
+          "dist/COPY.txt",
+          "dist/Dockerfile.bundle",
+          "dist/excludeme.txt",
+          "dist/index.ts",
+          "dist/lib/dep.ts",
+          "dist/package.json",
+          "dist/second.ts",
+          "leftover.txt"
+        ],
+        "stagedTreeHash": "6c28d0ceb0deecfe409047cd0d1e09818b161ba79b9093b34242cde50b4fd080",
+        "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-JrYAow",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/output-hash",
+      "adapter": "tcons-local",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 1,
+        "eagerBuild": true,
+        "artifactStillPresentAtStageTime": false,
+        "assetHash": "071E01E57EB7516D3C1AAB3A84D6C5A3",
+        "builtArtifactTreeHash": "6c28d0ceb0deecfe409047cd0d1e09818b161ba79b9093b34242cde50b4fd080",
+        "stagedTreeHash": "6c28d0ceb0deecfe409047cd0d1e09818b161ba79b9093b34242cde50b4fd080",
+        "stagingMatchesArtifact": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/zip-packaging",
+      "adapter": "tcons-local",
+      "status": "pass",
+      "observations": {
+        "stageTargetIsFile": true,
+        "packagingExtension": ".zip",
+        "packagingProducesDirectory": false,
+        "packagingAcceptsDirectorySource": true,
+        "packagingOmitsDirectoryEntries": true,
+        "bundleArtifactIsDirectory": true,
+        "archiveBytes": 1438,
+        "archiveEntries": [
+          "dist/BUILT",
+          "dist/COPY.txt",
+          "dist/Dockerfile.bundle",
+          "dist/excludeme.txt",
+          "dist/index.ts",
+          "dist/lib/dep.ts",
+          "dist/package.json",
+          "dist/second.ts",
+          "leftover.txt"
+        ],
+        "assetHash": "0F94DB8EB14646CB6CF4B6BF111E24C6",
+        "bundlerBuilds": 1,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice",
+      "adapter": "tcons-local",
+      "status": "pass",
+      "observations": {
+        "assetHash": "071E01E57EB7516D3C1AAB3A84D6C5A3",
+        "bundlerCallsAfterFirstStage": 1,
+        "bundlerCallsAfterSecondStage": 2,
+        "rebuiltOnSecondStage": true,
+        "firstTreeHash": "6c28d0ceb0deecfe409047cd0d1e09818b161ba79b9093b34242cde50b4fd080",
+        "secondTreeHash": "6c28d0ceb0deecfe409047cd0d1e09818b161ba79b9093b34242cde50b4fd080",
+        "artifactsIdentical": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice-nondeterministic",
+      "adapter": "tcons-local",
+      "status": "pass",
+      "observations": {
+        "assetHash": "8221A08D66B878D10C8804330DBA2CF4",
+        "bundlerCalls": 2,
+        "firstBuildInfo": "build-1-1789696839410-0.057791492725324245",
+        "secondBuildInfo": "build-2-1789696839413-0.20377485322931843",
+        "artifactsIdentical": false,
+        "sameIdentityDifferentBytes": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/synth-twice",
+      "adapter": "tcons-local",
+      "status": "pass",
+      "observations": {
+        "assetHash": "071E01E57EB7516D3C1AAB3A84D6C5A3",
+        "declaredAssetPath": "assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3",
+        "bundlerCallsAfterFirstSynth": 1,
+        "bundlerCallsAfterSecondSynth": 2,
+        "rebuiltOnSecondSynth": true,
+        "emittedAssetFiles": [
+          "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/dist/BUILT",
+          "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/dist/COPY.txt",
+          "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/dist/Dockerfile.bundle",
+          "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/dist/excludeme.txt",
+          "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/dist/index.ts",
+          "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/dist/lib/dep.ts",
+          "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/dist/package.json",
+          "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/dist/second.ts",
+          "stacks/stack-synth/assets/file/071E01E57EB7516D3C1AAB3A84D6C5A3/leftover.txt"
+        ],
+        "firstSynthOutdirHash": "c9cbf536fdfbfbdf8a25a16f45ce865e0e731c247da164b529f9d23bc8c11d0b",
+        "secondSynthOutdirHash": "c9cbf536fdfbfbdf8a25a16f45ce865e0e731c247da164b529f9d23bc8c11d0b",
+        "identicalAcrossSynths": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "asset/file-type-bundler",
+      "adapter": "tcons-local",
+      "status": "pass",
+      "observations": {
+        "rejectedAtConstruction": true,
+        "error": "TerraformAsset Staging was configured with a 'bundler' and file packaging (AssetType.FILE). A bundler produces a directory of output, which cannot be staged as a single file.",
+        "adapterProducesArchive": false,
+        "bundlerRanBeforeRejection": false,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "failure/bundler-throws",
+      "adapter": "tcons-local",
+      "status": "pass",
+      "observations": {
+        "errorPropagated": true,
+        "error": "harness: bundler failed after writing output",
+        "scratchDirsLeftInProcess": 1,
+        "scratchBytesLeftInProcess": 542,
+        "note": "registered scratch is reclaimed only by the process-exit sweep (see lifecycle/scratch-after-exit)",
+        "newScratchDirs": 1
+      }
+    },
+    {
+      "scenario": "identity/excluded-input-changes",
+      "adapter": "tcons-local",
+      "status": "pass",
+      "observations": {
+        "excludedFileShippedInArtifact": true,
+        "hashBefore": "D74B76B749465E83AD29C0B803B7A135",
+        "hashAfterExcludedChange": "D74B76B749465E83AD29C0B803B7A135",
+        "hashUnchangedDespiteExcludedChange": true,
+        "artifactChanged": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "determinism/two-fresh-builds",
+      "adapter": "tcons-local",
+      "status": "pass",
+      "observations": {
+        "first": "071E01E57EB7516D3C1AAB3A84D6C5A3",
+        "second": "071E01E57EB7516D3C1AAB3A84D6C5A3",
+        "assetHashesEqual": true,
+        "artifactTreesEqual": true,
+        "reproducible": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "identity/bundler-key",
+      "adapter": "tcons-local",
+      "status": "pass",
+      "observations": {
+        "adapterBundlerKey": "tcons-local::236ff636f0f4e2a2",
+        "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+        "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
+        "identityFollowsBundlerKey": true,
+        "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "large-output/never-staged",
+      "adapter": "tcons-local",
+      "status": "pass",
+      "observations": {
+        "assetHash": "32666C153DA623136797174C19E8CBC2",
+        "scratchDirsCreated": 1,
+        "scratchBytes": 8389150,
+        "scratchDirs": [
+          {
+            "dir": "/data/tmp/harness-tmp/cdktn-bundle-ns54TF",
+            "bytes": 8389150
+          }
+        ],
+        "newScratchDirs": 1
+      }
+    },
+    {
+      "scenario": "stage/source-hash",
+      "adapter": "tcons-nodejs",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 0,
+        "bundlerCallsAfterStage": 1,
+        "eagerBuild": false,
+        "assetHash": "C00B7C280F18A455D0F48467480C157E",
+        "stagedFiles": [
+          "index.js"
+        ],
+        "stagedTreeHash": "1ed269d14e603c1a9a4c4cc54dd5e7509b33a687432edafc6c0015907192ebc6",
+        "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-uXduhB",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/output-hash",
+      "adapter": "tcons-nodejs",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 1,
+        "eagerBuild": true,
+        "artifactStillPresentAtStageTime": false,
+        "assetHash": "BFE7C237F513EAC42EC72F4A0A034F24",
+        "builtArtifactTreeHash": "1ed269d14e603c1a9a4c4cc54dd5e7509b33a687432edafc6c0015907192ebc6",
+        "stagedTreeHash": "1ed269d14e603c1a9a4c4cc54dd5e7509b33a687432edafc6c0015907192ebc6",
+        "stagingMatchesArtifact": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/zip-packaging",
+      "adapter": "tcons-nodejs",
+      "status": "pass",
+      "observations": {
+        "stageTargetIsFile": true,
+        "packagingExtension": ".zip",
+        "packagingProducesDirectory": false,
+        "packagingAcceptsDirectorySource": true,
+        "packagingOmitsDirectoryEntries": true,
+        "bundleArtifactIsDirectory": true,
+        "archiveBytes": 641,
+        "archiveEntries": [
+          "index.js"
+        ],
+        "assetHash": "C00B7C280F18A455D0F48467480C157E",
+        "bundlerBuilds": 1,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice",
+      "adapter": "tcons-nodejs",
+      "status": "pass",
+      "observations": {
+        "assetHash": "BFE7C237F513EAC42EC72F4A0A034F24",
+        "bundlerCallsAfterFirstStage": 1,
+        "bundlerCallsAfterSecondStage": 2,
+        "rebuiltOnSecondStage": true,
+        "firstTreeHash": "1ed269d14e603c1a9a4c4cc54dd5e7509b33a687432edafc6c0015907192ebc6",
+        "secondTreeHash": "1ed269d14e603c1a9a4c4cc54dd5e7509b33a687432edafc6c0015907192ebc6",
+        "artifactsIdentical": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice-nondeterministic",
+      "adapter": "tcons-nodejs",
+      "status": "pass",
+      "observations": {
+        "assetHash": "CEA708CE24F536E9F057614F18DF77DC",
+        "bundlerCalls": 2,
+        "firstBuildInfo": "build-1-1789696839516-0.31432609753081864",
+        "secondBuildInfo": "build-2-1789696839518-0.4183443855828719",
+        "artifactsIdentical": false,
+        "sameIdentityDifferentBytes": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/synth-twice",
+      "adapter": "tcons-nodejs",
+      "status": "pass",
+      "observations": {
+        "assetHash": "BFE7C237F513EAC42EC72F4A0A034F24",
+        "declaredAssetPath": "assets/file/BFE7C237F513EAC42EC72F4A0A034F24",
+        "bundlerCallsAfterFirstSynth": 1,
+        "bundlerCallsAfterSecondSynth": 2,
+        "rebuiltOnSecondSynth": true,
+        "emittedAssetFiles": [
+          "stacks/stack-synth/assets/file/BFE7C237F513EAC42EC72F4A0A034F24/index.js"
+        ],
+        "firstSynthOutdirHash": "f02e509d0d682ee0df2d12a48ba98889f7e1523bdb455c6d90f45d5878c0e0a7",
+        "secondSynthOutdirHash": "f02e509d0d682ee0df2d12a48ba98889f7e1523bdb455c6d90f45d5878c0e0a7",
+        "identicalAcrossSynths": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "asset/file-type-bundler",
+      "adapter": "tcons-nodejs",
+      "status": "pass",
+      "observations": {
+        "rejectedAtConstruction": true,
+        "error": "TerraformAsset Staging was configured with a 'bundler' and file packaging (AssetType.FILE). A bundler produces a directory of output, which cannot be staged as a single file.",
+        "adapterProducesArchive": false,
+        "bundlerRanBeforeRejection": false,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "failure/bundler-throws",
+      "adapter": "tcons-nodejs",
+      "status": "pass",
+      "observations": {
+        "errorPropagated": true,
+        "error": "harness: bundler failed after writing output",
+        "scratchDirsLeftInProcess": 1,
+        "scratchBytesLeftInProcess": 1177,
+        "note": "registered scratch is reclaimed only by the process-exit sweep (see lifecycle/scratch-after-exit)",
+        "newScratchDirs": 1
+      }
+    },
+    {
+      "scenario": "identity/excluded-input-changes",
+      "adapter": "tcons-nodejs",
+      "status": "pass",
+      "observations": {
+        "excludedFileShippedInArtifact": false,
+        "hashBefore": "ED96F3944422144284C3E0DCEC79965F",
+        "hashAfterExcludedChange": "ED96F3944422144284C3E0DCEC79965F",
+        "hashUnchangedDespiteExcludedChange": true,
+        "artifactChanged": false,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "determinism/two-fresh-builds",
+      "adapter": "tcons-nodejs",
+      "status": "pass",
+      "observations": {
+        "first": "BFE7C237F513EAC42EC72F4A0A034F24",
+        "second": "BFE7C237F513EAC42EC72F4A0A034F24",
+        "assetHashesEqual": true,
+        "artifactTreesEqual": true,
+        "reproducible": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "identity/bundler-key",
+      "adapter": "tcons-nodejs",
+      "status": "pass",
+      "observations": {
+        "adapterBundlerKey": "tcons-nodejs::539d460f70f3c469",
+        "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+        "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
+        "identityFollowsBundlerKey": true,
+        "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "large-output/never-staged",
+      "adapter": "tcons-nodejs",
+      "status": "pass",
+      "observations": {
+        "assetHash": "0C40D1CF551005A01244B8D00CF20F11",
+        "scratchDirsCreated": 1,
+        "scratchBytes": 8389785,
+        "scratchDirs": [
+          {
+            "dir": "/data/tmp/harness-tmp/cdktn-bundle-5aSKVT",
+            "bytes": 8389785
+          }
+        ],
+        "newScratchDirs": 1
+      }
+    },
+    {
+      "scenario": "stage/source-hash",
+      "adapter": "rolldown-dir",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 0,
+        "bundlerCallsAfterStage": 1,
+        "eagerBuild": false,
+        "assetHash": "6C5E49C7F0E6A496316F8CE8520B9C82",
+        "stagedFiles": [
+          "index.mjs"
+        ],
+        "stagedTreeHash": "d931b15cb0140f4b263e6be9ea0548ac57c97bcbca3f56d6f0c88b243fb691f3",
+        "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-W1Puwj",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/output-hash",
+      "adapter": "rolldown-dir",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 1,
+        "eagerBuild": true,
+        "artifactStillPresentAtStageTime": false,
+        "assetHash": "643D974AC7675EF1F936B47E5B7FAD55",
+        "builtArtifactTreeHash": "d931b15cb0140f4b263e6be9ea0548ac57c97bcbca3f56d6f0c88b243fb691f3",
+        "stagedTreeHash": "d931b15cb0140f4b263e6be9ea0548ac57c97bcbca3f56d6f0c88b243fb691f3",
+        "stagingMatchesArtifact": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/zip-packaging",
+      "adapter": "rolldown-dir",
+      "status": "pass",
+      "observations": {
+        "stageTargetIsFile": true,
+        "packagingExtension": ".zip",
+        "packagingProducesDirectory": false,
+        "packagingAcceptsDirectorySource": true,
+        "packagingOmitsDirectoryEntries": true,
+        "bundleArtifactIsDirectory": true,
+        "archiveBytes": 168,
+        "archiveEntries": [
+          "index.mjs"
+        ],
+        "assetHash": "6C5E49C7F0E6A496316F8CE8520B9C82",
+        "bundlerBuilds": 1,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice",
+      "adapter": "rolldown-dir",
+      "status": "pass",
+      "observations": {
+        "assetHash": "643D974AC7675EF1F936B47E5B7FAD55",
+        "bundlerCallsAfterFirstStage": 1,
+        "bundlerCallsAfterSecondStage": 2,
+        "rebuiltOnSecondStage": true,
+        "firstTreeHash": "d931b15cb0140f4b263e6be9ea0548ac57c97bcbca3f56d6f0c88b243fb691f3",
+        "secondTreeHash": "d931b15cb0140f4b263e6be9ea0548ac57c97bcbca3f56d6f0c88b243fb691f3",
+        "artifactsIdentical": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice-nondeterministic",
+      "adapter": "rolldown-dir",
+      "status": "pass",
+      "observations": {
+        "assetHash": "58C364C9826EBFD628E3F01767DC2690",
+        "bundlerCalls": 2,
+        "firstBuildInfo": "build-1-1789696839983-0.21221495291063863",
+        "secondBuildInfo": "build-2-1789696840053-0.5517095106040205",
+        "artifactsIdentical": false,
+        "sameIdentityDifferentBytes": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/synth-twice",
+      "adapter": "rolldown-dir",
+      "status": "pass",
+      "observations": {
+        "assetHash": "643D974AC7675EF1F936B47E5B7FAD55",
+        "declaredAssetPath": "assets/file/643D974AC7675EF1F936B47E5B7FAD55",
+        "bundlerCallsAfterFirstSynth": 1,
+        "bundlerCallsAfterSecondSynth": 2,
+        "rebuiltOnSecondSynth": true,
+        "emittedAssetFiles": [
+          "stacks/stack-synth/assets/file/643D974AC7675EF1F936B47E5B7FAD55/index.mjs"
+        ],
+        "firstSynthOutdirHash": "a39f99c021886c34601c465c4a8d864ac2c1ab19a34755a1bda2a4602ba3bf64",
+        "secondSynthOutdirHash": "a39f99c021886c34601c465c4a8d864ac2c1ab19a34755a1bda2a4602ba3bf64",
+        "identicalAcrossSynths": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "asset/file-type-bundler",
+      "adapter": "rolldown-dir",
+      "status": "pass",
+      "observations": {
+        "rejectedAtConstruction": true,
+        "error": "TerraformAsset Staging was configured with a 'bundler' and file packaging (AssetType.FILE). A bundler produces a directory of output, which cannot be staged as a single file.",
+        "adapterProducesArchive": false,
+        "bundlerRanBeforeRejection": false,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "failure/bundler-throws",
+      "adapter": "rolldown-dir",
+      "status": "pass",
+      "observations": {
+        "errorPropagated": true,
+        "error": "harness: bundler failed after writing output",
+        "scratchDirsLeftInProcess": 1,
+        "scratchBytesLeftInProcess": 50,
+        "note": "registered scratch is reclaimed only by the process-exit sweep (see lifecycle/scratch-after-exit)",
+        "newScratchDirs": 1
+      }
+    },
+    {
+      "scenario": "identity/excluded-input-changes",
+      "adapter": "rolldown-dir",
+      "status": "pass",
+      "observations": {
+        "excludedFileShippedInArtifact": false,
+        "hashBefore": "2FD509049B928636AADB878AC2B36539",
+        "hashAfterExcludedChange": "2FD509049B928636AADB878AC2B36539",
+        "hashUnchangedDespiteExcludedChange": true,
+        "artifactChanged": false,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "determinism/two-fresh-builds",
+      "adapter": "rolldown-dir",
+      "status": "pass",
+      "observations": {
+        "first": "643D974AC7675EF1F936B47E5B7FAD55",
+        "second": "643D974AC7675EF1F936B47E5B7FAD55",
+        "assetHashesEqual": true,
+        "artifactTreesEqual": true,
+        "reproducible": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "identity/bundler-key",
+      "adapter": "rolldown-dir",
+      "status": "pass",
+      "observations": {
+        "adapterBundlerKey": "rolldown::node24::dir::true",
+        "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+        "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
+        "identityFollowsBundlerKey": true,
+        "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "large-output/never-staged",
+      "adapter": "rolldown-dir",
+      "status": "pass",
+      "observations": {
+        "assetHash": "43CB1048FC26EBDDD153D3729208867C",
+        "scratchDirsCreated": 1,
+        "scratchBytes": 8388658,
+        "scratchDirs": [
+          {
+            "dir": "/data/tmp/harness-tmp/cdktn-bundle-M9Dfnb",
+            "bytes": 8388658
+          }
+        ],
+        "newScratchDirs": 1
+      }
+    },
+    {
+      "scenario": "stage/source-hash",
+      "adapter": "rolldown-zip",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 0,
+        "bundlerCallsAfterStage": 1,
+        "eagerBuild": false,
+        "assetHash": "1D05C21925DBCB2D4B226F038A0F7C58",
+        "stagedFiles": [
+          "archive.zip"
+        ],
+        "stagedTreeHash": "088e2e43ca3e3c907354214bdc91fe00399f219dc0d349341ec9b1d71fd68a69",
+        "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-k8Wyxg",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/output-hash",
+      "adapter": "rolldown-zip",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 1,
+        "eagerBuild": true,
+        "artifactStillPresentAtStageTime": false,
+        "assetHash": "CAD07DB12BD56AEE180CBA67ADFCE64C",
+        "builtArtifactTreeHash": "088e2e43ca3e3c907354214bdc91fe00399f219dc0d349341ec9b1d71fd68a69",
+        "stagedTreeHash": "088e2e43ca3e3c907354214bdc91fe00399f219dc0d349341ec9b1d71fd68a69",
+        "stagingMatchesArtifact": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/zip-packaging",
+      "adapter": "rolldown-zip",
+      "status": "pass",
+      "observations": {
+        "stageTargetIsFile": true,
+        "packagingExtension": ".zip",
+        "packagingProducesDirectory": false,
+        "packagingAcceptsDirectorySource": true,
+        "packagingOmitsDirectoryEntries": true,
+        "bundleArtifactIsDirectory": true,
+        "archiveBytes": 239,
+        "archiveEntries": [
+          "archive.zip"
+        ],
+        "doubleArchived": "archive.zip",
+        "assetHash": "1D05C21925DBCB2D4B226F038A0F7C58",
+        "bundlerBuilds": 1,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice",
+      "adapter": "rolldown-zip",
+      "status": "pass",
+      "observations": {
+        "assetHash": "CAD07DB12BD56AEE180CBA67ADFCE64C",
+        "bundlerCallsAfterFirstStage": 1,
+        "bundlerCallsAfterSecondStage": 2,
+        "rebuiltOnSecondStage": true,
+        "firstTreeHash": "088e2e43ca3e3c907354214bdc91fe00399f219dc0d349341ec9b1d71fd68a69",
+        "secondTreeHash": "088e2e43ca3e3c907354214bdc91fe00399f219dc0d349341ec9b1d71fd68a69",
+        "artifactsIdentical": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice-nondeterministic",
+      "adapter": "rolldown-zip",
+      "status": "pass",
+      "observations": {
+        "assetHash": "89E5E781F8E768C235360157CA9DF888",
+        "bundlerCalls": 2,
+        "firstBuildInfo": "build-1-1789696841024-0.02427551026968422",
+        "secondBuildInfo": "build-2-1789696841086-0.3834833992324075",
+        "artifactsIdentical": false,
+        "sameIdentityDifferentBytes": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/synth-twice",
+      "adapter": "rolldown-zip",
+      "status": "pass",
+      "observations": {
+        "assetHash": "CAD07DB12BD56AEE180CBA67ADFCE64C",
+        "declaredAssetPath": "assets/file/CAD07DB12BD56AEE180CBA67ADFCE64C",
+        "bundlerCallsAfterFirstSynth": 1,
+        "bundlerCallsAfterSecondSynth": 2,
+        "rebuiltOnSecondSynth": true,
+        "emittedAssetFiles": [
+          "stacks/stack-synth/assets/file/CAD07DB12BD56AEE180CBA67ADFCE64C/archive.zip"
+        ],
+        "firstSynthOutdirHash": "c88f72368fac7e07bf4c4f6ce23319822dd35cdf3aef2fda520e74577721ec8a",
+        "secondSynthOutdirHash": "c88f72368fac7e07bf4c4f6ce23319822dd35cdf3aef2fda520e74577721ec8a",
+        "identicalAcrossSynths": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "asset/file-type-bundler",
+      "adapter": "rolldown-zip",
+      "status": "pass",
+      "observations": {
+        "rejectedAtConstruction": true,
+        "error": "TerraformAsset Staging was configured with a 'bundler' and file packaging (AssetType.FILE). A bundler produces a directory of output, which cannot be staged as a single file.",
+        "adapterProducesArchive": true,
+        "bundlerRanBeforeRejection": false,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "failure/bundler-throws",
+      "adapter": "rolldown-zip",
+      "status": "pass",
+      "observations": {
+        "errorPropagated": true,
+        "error": "harness: bundler failed after writing output",
+        "scratchDirsLeftInProcess": 1,
+        "scratchBytesLeftInProcess": 168,
+        "note": "registered scratch is reclaimed only by the process-exit sweep (see lifecycle/scratch-after-exit)",
+        "newScratchDirs": 1
+      }
+    },
+    {
+      "scenario": "identity/excluded-input-changes",
+      "adapter": "rolldown-zip",
+      "status": "pass",
+      "observations": {
+        "excludedFileShippedInArtifact": false,
+        "hashBefore": "30E1D2A01437B8300F3CDC06A1C9D94B",
+        "hashAfterExcludedChange": "30E1D2A01437B8300F3CDC06A1C9D94B",
+        "hashUnchangedDespiteExcludedChange": true,
+        "artifactChanged": false,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "determinism/two-fresh-builds",
+      "adapter": "rolldown-zip",
+      "status": "pass",
+      "observations": {
+        "first": "CAD07DB12BD56AEE180CBA67ADFCE64C",
+        "second": "CAD07DB12BD56AEE180CBA67ADFCE64C",
+        "assetHashesEqual": true,
+        "artifactTreesEqual": true,
+        "reproducible": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "identity/bundler-key",
+      "adapter": "rolldown-zip",
+      "status": "pass",
+      "observations": {
+        "adapterBundlerKey": "rolldown::node24::zip::true",
+        "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+        "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
+        "identityFollowsBundlerKey": true,
+        "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "large-output/never-staged",
+      "adapter": "rolldown-zip",
+      "status": "pass",
+      "observations": {
+        "assetHash": "A5586E7989459D484F1DAD19E78D7971",
+        "scratchDirsCreated": 1,
+        "scratchBytes": 8388776,
+        "scratchDirs": [
+          {
+            "dir": "/data/tmp/harness-tmp/cdktn-bundle-l9eKH9",
+            "bytes": 8388776
+          }
+        ],
+        "newScratchDirs": 1
+      }
+    },
+    {
+      "scenario": "stage/source-hash",
+      "adapter": "tcons-docker-bind",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 0,
+        "bundlerCallsAfterStage": 1,
+        "eagerBuild": false,
+        "assetHash": "9B1A30667E8216BEC1FB1C521763D6D6",
+        "stagedFiles": [
+          "dist/BUILT",
+          "dist/COPY.txt",
+          "dist/Dockerfile.bundle",
+          "dist/excludeme.txt",
+          "dist/index.ts",
+          "dist/lib/dep.ts",
+          "dist/package.json",
+          "dist/second.ts"
+        ],
+        "stagedTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
+        "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-4iae9I",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/output-hash",
+      "adapter": "tcons-docker-bind",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 1,
+        "eagerBuild": true,
+        "artifactStillPresentAtStageTime": false,
+        "assetHash": "42D004958213F4F567A25444957CF47D",
+        "builtArtifactTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
+        "stagedTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
+        "stagingMatchesArtifact": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/zip-packaging",
+      "adapter": "tcons-docker-bind",
+      "status": "pass",
+      "observations": {
+        "stageTargetIsFile": true,
+        "packagingExtension": ".zip",
+        "packagingProducesDirectory": false,
+        "packagingAcceptsDirectorySource": true,
+        "packagingOmitsDirectoryEntries": true,
+        "bundleArtifactIsDirectory": true,
+        "archiveBytes": 1343,
+        "archiveEntries": [
+          "dist/BUILT",
+          "dist/COPY.txt",
+          "dist/Dockerfile.bundle",
+          "dist/excludeme.txt",
+          "dist/index.ts",
+          "dist/lib/dep.ts",
+          "dist/package.json",
+          "dist/second.ts"
+        ],
+        "assetHash": "9B1A30667E8216BEC1FB1C521763D6D6",
+        "bundlerBuilds": 1,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice",
+      "adapter": "tcons-docker-bind",
+      "status": "pass",
+      "observations": {
+        "assetHash": "42D004958213F4F567A25444957CF47D",
+        "bundlerCallsAfterFirstStage": 1,
+        "bundlerCallsAfterSecondStage": 2,
+        "rebuiltOnSecondStage": true,
+        "firstTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
+        "secondTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
+        "artifactsIdentical": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice-nondeterministic",
+      "adapter": "tcons-docker-bind",
+      "status": "pass",
+      "observations": {
+        "assetHash": "543D01349E4910E4C2768A6CB1881A20",
+        "bundlerCalls": 2,
+        "firstBuildInfo": "build-1-1789696843853-0.23603565987091635",
+        "secondBuildInfo": "build-2-1789696844132-0.2761373157694582",
+        "artifactsIdentical": false,
+        "sameIdentityDifferentBytes": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/synth-twice",
+      "adapter": "tcons-docker-bind",
+      "status": "pass",
+      "observations": {
+        "assetHash": "42D004958213F4F567A25444957CF47D",
+        "declaredAssetPath": "assets/file/42D004958213F4F567A25444957CF47D",
+        "bundlerCallsAfterFirstSynth": 1,
+        "bundlerCallsAfterSecondSynth": 2,
+        "rebuiltOnSecondSynth": true,
+        "emittedAssetFiles": [
+          "stacks/stack-synth/assets/file/42D004958213F4F567A25444957CF47D/dist/BUILT",
+          "stacks/stack-synth/assets/file/42D004958213F4F567A25444957CF47D/dist/COPY.txt",
+          "stacks/stack-synth/assets/file/42D004958213F4F567A25444957CF47D/dist/Dockerfile.bundle",
+          "stacks/stack-synth/assets/file/42D004958213F4F567A25444957CF47D/dist/excludeme.txt",
+          "stacks/stack-synth/assets/file/42D004958213F4F567A25444957CF47D/dist/index.ts",
+          "stacks/stack-synth/assets/file/42D004958213F4F567A25444957CF47D/dist/lib/dep.ts",
+          "stacks/stack-synth/assets/file/42D004958213F4F567A25444957CF47D/dist/package.json",
+          "stacks/stack-synth/assets/file/42D004958213F4F567A25444957CF47D/dist/second.ts"
+        ],
+        "firstSynthOutdirHash": "62e283708c78fa5837446e52aedb3aaca4f76d2133ce2bca1eb2c677629135c5",
+        "secondSynthOutdirHash": "62e283708c78fa5837446e52aedb3aaca4f76d2133ce2bca1eb2c677629135c5",
+        "identicalAcrossSynths": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "asset/file-type-bundler",
+      "adapter": "tcons-docker-bind",
+      "status": "pass",
+      "observations": {
+        "rejectedAtConstruction": true,
+        "error": "TerraformAsset Staging was configured with a 'bundler' and file packaging (AssetType.FILE). A bundler produces a directory of output, which cannot be staged as a single file.",
+        "adapterProducesArchive": false,
+        "bundlerRanBeforeRejection": false,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "failure/bundler-throws",
+      "adapter": "tcons-docker-bind",
+      "status": "pass",
+      "observations": {
+        "errorPropagated": true,
+        "error": "harness: bundler failed after writing output",
+        "scratchDirsLeftInProcess": 1,
+        "scratchBytesLeftInProcess": 549,
+        "note": "registered scratch is reclaimed only by the process-exit sweep (see lifecycle/scratch-after-exit)",
+        "newScratchDirs": 1
+      }
+    },
+    {
+      "scenario": "identity/excluded-input-changes",
+      "adapter": "tcons-docker-bind",
+      "status": "pass",
+      "observations": {
+        "excludedFileShippedInArtifact": true,
+        "hashBefore": "4158E797C3DC5629E045E3887646268D",
+        "hashAfterExcludedChange": "4158E797C3DC5629E045E3887646268D",
+        "hashUnchangedDespiteExcludedChange": true,
+        "artifactChanged": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "determinism/two-fresh-builds",
+      "adapter": "tcons-docker-bind",
+      "status": "pass",
+      "observations": {
+        "first": "42D004958213F4F567A25444957CF47D",
+        "second": "42D004958213F4F567A25444957CF47D",
+        "assetHashesEqual": true,
+        "artifactTreesEqual": true,
+        "reproducible": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "identity/bundler-key",
+      "adapter": "tcons-docker-bind",
+      "status": "pass",
+      "observations": {
+        "adapterBundlerKey": "tcons-docker::alpine::sh -c mkdir -p /asset-output/dist && cp -r /asset-input/. /asset-output/dist/ && printf 'built-in-container\\n' > /asset-output/dist/BUILT::BIND_MOUNT",
+        "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+        "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
+        "identityFollowsBundlerKey": true,
+        "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "large-output/never-staged",
+      "adapter": "tcons-docker-bind",
+      "status": "pass",
+      "observations": {
+        "assetHash": "A6EFCB910DB6E31B43CD5C09F2494E61",
+        "scratchDirsCreated": 1,
+        "scratchBytes": 8389157,
+        "scratchDirs": [
+          {
+            "dir": "/data/tmp/harness-tmp/cdktn-bundle-4MYT9q",
+            "bytes": 8389157
+          }
+        ],
+        "newScratchDirs": 1
+      }
+    },
+    {
+      "scenario": "stage/source-hash",
+      "adapter": "tcons-docker-volume",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 0,
+        "bundlerCallsAfterStage": 1,
+        "eagerBuild": false,
+        "assetHash": "C6A9EE8936D8296FD085D4147A799ACE",
+        "stagedFiles": [
+          "dist/BUILT",
+          "dist/COPY.txt",
+          "dist/Dockerfile.bundle",
+          "dist/excludeme.txt",
+          "dist/index.ts",
+          "dist/lib/dep.ts",
+          "dist/package.json",
+          "dist/second.ts"
+        ],
+        "stagedTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
+        "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-NAZkwK",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/output-hash",
+      "adapter": "tcons-docker-volume",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 1,
+        "eagerBuild": true,
+        "artifactStillPresentAtStageTime": false,
+        "assetHash": "9D8662BECC4608351C64916751988357",
+        "builtArtifactTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
+        "stagedTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
+        "stagingMatchesArtifact": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/zip-packaging",
+      "adapter": "tcons-docker-volume",
+      "status": "pass",
+      "observations": {
+        "stageTargetIsFile": true,
+        "packagingExtension": ".zip",
+        "packagingProducesDirectory": false,
+        "packagingAcceptsDirectorySource": true,
+        "packagingOmitsDirectoryEntries": true,
+        "bundleArtifactIsDirectory": true,
+        "archiveBytes": 1343,
+        "archiveEntries": [
+          "dist/BUILT",
+          "dist/COPY.txt",
+          "dist/Dockerfile.bundle",
+          "dist/excludeme.txt",
+          "dist/index.ts",
+          "dist/lib/dep.ts",
+          "dist/package.json",
+          "dist/second.ts"
+        ],
+        "assetHash": "C6A9EE8936D8296FD085D4147A799ACE",
+        "bundlerBuilds": 1,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice",
+      "adapter": "tcons-docker-volume",
+      "status": "pass",
+      "observations": {
+        "assetHash": "9D8662BECC4608351C64916751988357",
+        "bundlerCallsAfterFirstStage": 1,
+        "bundlerCallsAfterSecondStage": 2,
+        "rebuiltOnSecondStage": true,
+        "firstTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
+        "secondTreeHash": "cb875499a3f04ef7b4dc29d9b766b70c7c20a6fc05ccbc40e431c3f0dc3d0b81",
+        "artifactsIdentical": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice-nondeterministic",
+      "adapter": "tcons-docker-volume",
+      "status": "pass",
+      "observations": {
+        "assetHash": "348B7196D7AD5685C70355B69263F8C9",
+        "bundlerCalls": 2,
+        "firstBuildInfo": "build-1-1789696851524-0.2671717933786186",
+        "secondBuildInfo": "build-2-1789696852261-0.5061010479273483",
+        "artifactsIdentical": false,
+        "sameIdentityDifferentBytes": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/synth-twice",
+      "adapter": "tcons-docker-volume",
+      "status": "pass",
+      "observations": {
+        "assetHash": "9D8662BECC4608351C64916751988357",
+        "declaredAssetPath": "assets/file/9D8662BECC4608351C64916751988357",
+        "bundlerCallsAfterFirstSynth": 1,
+        "bundlerCallsAfterSecondSynth": 2,
+        "rebuiltOnSecondSynth": true,
+        "emittedAssetFiles": [
+          "stacks/stack-synth/assets/file/9D8662BECC4608351C64916751988357/dist/BUILT",
+          "stacks/stack-synth/assets/file/9D8662BECC4608351C64916751988357/dist/COPY.txt",
+          "stacks/stack-synth/assets/file/9D8662BECC4608351C64916751988357/dist/Dockerfile.bundle",
+          "stacks/stack-synth/assets/file/9D8662BECC4608351C64916751988357/dist/excludeme.txt",
+          "stacks/stack-synth/assets/file/9D8662BECC4608351C64916751988357/dist/index.ts",
+          "stacks/stack-synth/assets/file/9D8662BECC4608351C64916751988357/dist/lib/dep.ts",
+          "stacks/stack-synth/assets/file/9D8662BECC4608351C64916751988357/dist/package.json",
+          "stacks/stack-synth/assets/file/9D8662BECC4608351C64916751988357/dist/second.ts"
+        ],
+        "firstSynthOutdirHash": "29c48d091503c5d1d61d6ef639d9b53d8ec86fb8fe852eeb2a69ee51185efbd8",
+        "secondSynthOutdirHash": "29c48d091503c5d1d61d6ef639d9b53d8ec86fb8fe852eeb2a69ee51185efbd8",
+        "identicalAcrossSynths": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "asset/file-type-bundler",
+      "adapter": "tcons-docker-volume",
+      "status": "pass",
+      "observations": {
+        "rejectedAtConstruction": true,
+        "error": "TerraformAsset Staging was configured with a 'bundler' and file packaging (AssetType.FILE). A bundler produces a directory of output, which cannot be staged as a single file.",
+        "adapterProducesArchive": false,
+        "bundlerRanBeforeRejection": false,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "failure/bundler-throws",
+      "adapter": "tcons-docker-volume",
+      "status": "pass",
+      "observations": {
+        "errorPropagated": true,
+        "error": "harness: bundler failed after writing output",
+        "scratchDirsLeftInProcess": 1,
+        "scratchBytesLeftInProcess": 549,
+        "note": "registered scratch is reclaimed only by the process-exit sweep (see lifecycle/scratch-after-exit)",
+        "newScratchDirs": 1
+      }
+    },
+    {
+      "scenario": "identity/excluded-input-changes",
+      "adapter": "tcons-docker-volume",
+      "status": "pass",
+      "observations": {
+        "excludedFileShippedInArtifact": true,
+        "hashBefore": "5DAFC0A5B89D4670BD6F4A37835CFCFE",
+        "hashAfterExcludedChange": "5DAFC0A5B89D4670BD6F4A37835CFCFE",
+        "hashUnchangedDespiteExcludedChange": true,
+        "artifactChanged": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "determinism/two-fresh-builds",
+      "adapter": "tcons-docker-volume",
+      "status": "pass",
+      "observations": {
+        "first": "9D8662BECC4608351C64916751988357",
+        "second": "9D8662BECC4608351C64916751988357",
+        "assetHashesEqual": true,
+        "artifactTreesEqual": true,
+        "reproducible": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "identity/bundler-key",
+      "adapter": "tcons-docker-volume",
+      "status": "pass",
+      "observations": {
+        "adapterBundlerKey": "tcons-docker::alpine::sh -c mkdir -p /asset-output/dist && cp -r /asset-input/. /asset-output/dist/ && printf 'built-in-container\\n' > /asset-output/dist/BUILT::VOLUME_COPY",
+        "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+        "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
+        "identityFollowsBundlerKey": true,
+        "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "large-output/never-staged",
+      "adapter": "tcons-docker-volume",
+      "status": "pass",
+      "observations": {
+        "assetHash": "A34F8AACFEB24D63CAFA4A5ABD1A8CFE",
+        "scratchDirsCreated": 1,
+        "scratchBytes": 8389157,
+        "scratchDirs": [
+          {
+            "dir": "/data/tmp/harness-tmp/cdktn-bundle-pceBhw",
+            "bytes": 8389157
+          }
+        ],
+        "newScratchDirs": 1
+      }
+    },
+    {
+      "scenario": "stage/source-hash",
+      "adapter": "tcons-local-docker-chain",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 0,
+        "bundlerCallsAfterStage": 1,
+        "eagerBuild": false,
+        "assetHash": "EE710F8A4C48218A4C8CB42AB22D42A3",
+        "stagedFiles": [
+          "dist/COPY.txt",
+          "dist/Dockerfile.bundle",
+          "dist/excludeme.txt",
+          "dist/index.ts",
+          "dist/lib/dep.ts",
+          "dist/package.json",
+          "dist/second.ts"
+        ],
+        "stagedTreeHash": "83bb1637626733a8daf18bb92da2c0f4449797e1235670ab76526d55cb325876",
+        "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-HJ2azS",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/output-hash",
+      "adapter": "tcons-local-docker-chain",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 1,
+        "eagerBuild": true,
+        "artifactStillPresentAtStageTime": false,
+        "assetHash": "EE710F8A4C48218A4C8CB42AB22D42A3",
+        "builtArtifactTreeHash": "83bb1637626733a8daf18bb92da2c0f4449797e1235670ab76526d55cb325876",
+        "stagedTreeHash": "83bb1637626733a8daf18bb92da2c0f4449797e1235670ab76526d55cb325876",
+        "stagingMatchesArtifact": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/zip-packaging",
+      "adapter": "tcons-local-docker-chain",
+      "status": "pass",
+      "observations": {
+        "stageTargetIsFile": true,
+        "packagingExtension": ".zip",
+        "packagingProducesDirectory": false,
+        "packagingAcceptsDirectorySource": true,
+        "packagingOmitsDirectoryEntries": true,
+        "bundleArtifactIsDirectory": true,
+        "archiveBytes": 1226,
+        "archiveEntries": [
+          "dist/COPY.txt",
+          "dist/Dockerfile.bundle",
+          "dist/excludeme.txt",
+          "dist/index.ts",
+          "dist/lib/dep.ts",
+          "dist/package.json",
+          "dist/second.ts"
+        ],
+        "assetHash": "EE710F8A4C48218A4C8CB42AB22D42A3",
+        "bundlerBuilds": 1,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice",
+      "adapter": "tcons-local-docker-chain",
+      "status": "pass",
+      "observations": {
+        "assetHash": "EE710F8A4C48218A4C8CB42AB22D42A3",
+        "bundlerCallsAfterFirstStage": 1,
+        "bundlerCallsAfterSecondStage": 2,
+        "rebuiltOnSecondStage": true,
+        "firstTreeHash": "83bb1637626733a8daf18bb92da2c0f4449797e1235670ab76526d55cb325876",
+        "secondTreeHash": "83bb1637626733a8daf18bb92da2c0f4449797e1235670ab76526d55cb325876",
+        "artifactsIdentical": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice-nondeterministic",
+      "adapter": "tcons-local-docker-chain",
+      "status": "pass",
+      "observations": {
+        "assetHash": "46C2A69E78A7236BD96D6A0AFB121010",
+        "bundlerCalls": 2,
+        "firstBuildInfo": "build-1-1789696860534-0.4677671694487088",
+        "secondBuildInfo": "build-2-1789696860842-0.2053920257007572",
+        "artifactsIdentical": false,
+        "sameIdentityDifferentBytes": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/synth-twice",
+      "adapter": "tcons-local-docker-chain",
+      "status": "pass",
+      "observations": {
+        "assetHash": "EE710F8A4C48218A4C8CB42AB22D42A3",
+        "declaredAssetPath": "assets/file/EE710F8A4C48218A4C8CB42AB22D42A3",
+        "bundlerCallsAfterFirstSynth": 1,
+        "bundlerCallsAfterSecondSynth": 2,
+        "rebuiltOnSecondSynth": true,
+        "emittedAssetFiles": [
+          "stacks/stack-synth/assets/file/EE710F8A4C48218A4C8CB42AB22D42A3/dist/COPY.txt",
+          "stacks/stack-synth/assets/file/EE710F8A4C48218A4C8CB42AB22D42A3/dist/Dockerfile.bundle",
+          "stacks/stack-synth/assets/file/EE710F8A4C48218A4C8CB42AB22D42A3/dist/excludeme.txt",
+          "stacks/stack-synth/assets/file/EE710F8A4C48218A4C8CB42AB22D42A3/dist/index.ts",
+          "stacks/stack-synth/assets/file/EE710F8A4C48218A4C8CB42AB22D42A3/dist/lib/dep.ts",
+          "stacks/stack-synth/assets/file/EE710F8A4C48218A4C8CB42AB22D42A3/dist/package.json",
+          "stacks/stack-synth/assets/file/EE710F8A4C48218A4C8CB42AB22D42A3/dist/second.ts"
+        ],
+        "firstSynthOutdirHash": "d30167bac754bfd84e9b3c048a950ab01a58ebd57d3688c7f7cd725bbe0871ae",
+        "secondSynthOutdirHash": "d30167bac754bfd84e9b3c048a950ab01a58ebd57d3688c7f7cd725bbe0871ae",
+        "identicalAcrossSynths": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "asset/file-type-bundler",
+      "adapter": "tcons-local-docker-chain",
+      "status": "pass",
+      "observations": {
+        "rejectedAtConstruction": true,
+        "error": "TerraformAsset Staging was configured with a 'bundler' and file packaging (AssetType.FILE). A bundler produces a directory of output, which cannot be staged as a single file.",
+        "adapterProducesArchive": false,
+        "bundlerRanBeforeRejection": false,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "failure/bundler-throws",
+      "adapter": "tcons-local-docker-chain",
+      "status": "pass",
+      "observations": {
+        "errorPropagated": true,
+        "error": "harness: bundler failed after writing output",
+        "scratchDirsLeftInProcess": 1,
+        "scratchBytesLeftInProcess": 530,
+        "note": "registered scratch is reclaimed only by the process-exit sweep (see lifecycle/scratch-after-exit)",
+        "newScratchDirs": 1
+      }
+    },
+    {
+      "scenario": "identity/excluded-input-changes",
+      "adapter": "tcons-local-docker-chain",
+      "status": "pass",
+      "observations": {
+        "excludedFileShippedInArtifact": true,
+        "hashBefore": "FC5D20BBDE3D4BDFE31D3A8D519AA309",
+        "hashAfterExcludedChange": "FC5D20BBDE3D4BDFE31D3A8D519AA309",
+        "hashUnchangedDespiteExcludedChange": true,
+        "artifactChanged": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "determinism/two-fresh-builds",
+      "adapter": "tcons-local-docker-chain",
+      "status": "pass",
+      "observations": {
+        "first": "EE710F8A4C48218A4C8CB42AB22D42A3",
+        "second": "EE710F8A4C48218A4C8CB42AB22D42A3",
+        "assetHashesEqual": true,
+        "artifactTreesEqual": true,
+        "reproducible": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "identity/bundler-key",
+      "adapter": "tcons-local-docker-chain",
+      "status": "pass",
+      "observations": {
+        "adapterBundlerKey": "tcons-chain::tcons-local::c900e62f514cdd9f",
+        "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+        "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
+        "identityFollowsBundlerKey": true,
+        "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "large-output/never-staged",
+      "adapter": "tcons-local-docker-chain",
+      "status": "pass",
+      "observations": {
+        "assetHash": "332D62BE5C70EA3C4511901E64649B0C",
+        "scratchDirsCreated": 1,
+        "scratchBytes": 8389138,
+        "scratchDirs": [
+          {
+            "dir": "/data/tmp/harness-tmp/cdktn-bundle-rayPgo",
+            "bytes": 8389138
+          }
+        ],
+        "newScratchDirs": 1
+      }
+    },
+    {
+      "scenario": "stage/source-hash",
+      "adapter": "buildkit-local-output",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 0,
+        "bundlerCallsAfterStage": 1,
+        "eagerBuild": false,
+        "assetHash": "B9E6B83731F07590D0E8C7F643231006",
+        "stagedFiles": [
+          "BUILT",
+          "COPY.txt",
+          "Dockerfile.bundle",
+          "excludeme.txt",
+          "index.ts",
+          "lib/dep.ts",
+          "package.json",
+          "second.ts"
+        ],
+        "stagedTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+        "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-pI6Xj1",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/output-hash",
+      "adapter": "buildkit-local-output",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 1,
+        "eagerBuild": true,
+        "artifactStillPresentAtStageTime": false,
+        "assetHash": "F8F193C27F9E13B31A3B3C1CD5479836",
+        "builtArtifactTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+        "stagedTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+        "stagingMatchesArtifact": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/zip-packaging",
+      "adapter": "buildkit-local-output",
+      "status": "pass",
+      "observations": {
+        "stageTargetIsFile": true,
+        "packagingExtension": ".zip",
+        "packagingProducesDirectory": false,
+        "packagingAcceptsDirectorySource": true,
+        "packagingOmitsDirectoryEntries": true,
+        "bundleArtifactIsDirectory": true,
+        "archiveBytes": 1259,
+        "archiveEntries": [
+          "BUILT",
+          "COPY.txt",
+          "Dockerfile.bundle",
+          "excludeme.txt",
+          "index.ts",
+          "lib/dep.ts",
+          "package.json",
+          "second.ts"
+        ],
+        "assetHash": "B9E6B83731F07590D0E8C7F643231006",
+        "bundlerBuilds": 1,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice",
+      "adapter": "buildkit-local-output",
+      "status": "pass",
+      "observations": {
+        "assetHash": "F8F193C27F9E13B31A3B3C1CD5479836",
+        "bundlerCallsAfterFirstStage": 1,
+        "bundlerCallsAfterSecondStage": 2,
+        "rebuiltOnSecondStage": true,
+        "firstTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+        "secondTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+        "artifactsIdentical": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice-nondeterministic",
+      "adapter": "buildkit-local-output",
+      "status": "pass",
+      "observations": {
+        "assetHash": "B812B6514E45F358DDB60AC613F467BD",
+        "bundlerCalls": 2,
+        "firstBuildInfo": "build-1-1789696867075-0.9072878948579711",
+        "secondBuildInfo": "build-2-1789696867584-0.9814350178757415",
+        "artifactsIdentical": false,
+        "sameIdentityDifferentBytes": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/synth-twice",
+      "adapter": "buildkit-local-output",
+      "status": "pass",
+      "observations": {
+        "assetHash": "F8F193C27F9E13B31A3B3C1CD5479836",
+        "declaredAssetPath": "assets/file/F8F193C27F9E13B31A3B3C1CD5479836",
+        "bundlerCallsAfterFirstSynth": 1,
+        "bundlerCallsAfterSecondSynth": 2,
+        "rebuiltOnSecondSynth": true,
+        "emittedAssetFiles": [
+          "stacks/stack-synth/assets/file/F8F193C27F9E13B31A3B3C1CD5479836/BUILT",
+          "stacks/stack-synth/assets/file/F8F193C27F9E13B31A3B3C1CD5479836/COPY.txt",
+          "stacks/stack-synth/assets/file/F8F193C27F9E13B31A3B3C1CD5479836/Dockerfile.bundle",
+          "stacks/stack-synth/assets/file/F8F193C27F9E13B31A3B3C1CD5479836/excludeme.txt",
+          "stacks/stack-synth/assets/file/F8F193C27F9E13B31A3B3C1CD5479836/index.ts",
+          "stacks/stack-synth/assets/file/F8F193C27F9E13B31A3B3C1CD5479836/lib/dep.ts",
+          "stacks/stack-synth/assets/file/F8F193C27F9E13B31A3B3C1CD5479836/package.json",
+          "stacks/stack-synth/assets/file/F8F193C27F9E13B31A3B3C1CD5479836/second.ts"
+        ],
+        "firstSynthOutdirHash": "34981b7479e0a080f447db4442e031a01d818255353492c6ff9122c50598927d",
+        "secondSynthOutdirHash": "34981b7479e0a080f447db4442e031a01d818255353492c6ff9122c50598927d",
+        "identicalAcrossSynths": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "asset/file-type-bundler",
+      "adapter": "buildkit-local-output",
+      "status": "pass",
+      "observations": {
+        "rejectedAtConstruction": true,
+        "error": "TerraformAsset Staging was configured with a 'bundler' and file packaging (AssetType.FILE). A bundler produces a directory of output, which cannot be staged as a single file.",
+        "adapterProducesArchive": false,
+        "bundlerRanBeforeRejection": false,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "failure/bundler-throws",
+      "adapter": "buildkit-local-output",
+      "status": "pass",
+      "observations": {
+        "errorPropagated": true,
+        "error": "harness: bundler failed after writing output",
+        "scratchDirsLeftInProcess": 1,
+        "scratchBytesLeftInProcess": 548,
+        "note": "registered scratch is reclaimed only by the process-exit sweep (see lifecycle/scratch-after-exit)",
+        "newScratchDirs": 1
+      }
+    },
+    {
+      "scenario": "identity/excluded-input-changes",
+      "adapter": "buildkit-local-output",
+      "status": "pass",
+      "observations": {
+        "excludedFileShippedInArtifact": true,
+        "hashBefore": "1F1D53FC21FD6940C942F50731DCEC82",
+        "hashAfterExcludedChange": "1F1D53FC21FD6940C942F50731DCEC82",
+        "hashUnchangedDespiteExcludedChange": true,
+        "artifactChanged": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "determinism/two-fresh-builds",
+      "adapter": "buildkit-local-output",
+      "status": "pass",
+      "observations": {
+        "first": "F8F193C27F9E13B31A3B3C1CD5479836",
+        "second": "F8F193C27F9E13B31A3B3C1CD5479836",
+        "assetHashesEqual": true,
+        "artifactTreesEqual": true,
+        "reproducible": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "identity/bundler-key",
+      "adapter": "buildkit-local-output",
+      "status": "pass",
+      "observations": {
+        "adapterBundlerKey": "buildkit::tcp://127.0.0.1:1234::Dockerfile.bundle",
+        "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+        "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
+        "identityFollowsBundlerKey": true,
+        "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "large-output/never-staged",
+      "adapter": "buildkit-local-output",
+      "status": "pass",
+      "observations": {
+        "assetHash": "77C39E1D7ADAA88D30EA85EA658D9014",
+        "scratchDirsCreated": 1,
+        "scratchBytes": 8389156,
+        "scratchDirs": [
+          {
+            "dir": "/data/tmp/harness-tmp/cdktn-bundle-7k7H3A",
+            "bytes": 8389156
+          }
+        ],
+        "newScratchDirs": 1
+      }
+    },
+    {
+      "scenario": "stage/source-hash",
+      "adapter": "buildkit-docker-daemon",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 0,
+        "bundlerCallsAfterStage": 1,
+        "eagerBuild": false,
+        "assetHash": "94C22CE195D86C1223E95988405A6713",
+        "stagedFiles": [
+          "BUILT",
+          "COPY.txt",
+          "Dockerfile.bundle",
+          "excludeme.txt",
+          "index.ts",
+          "lib/dep.ts",
+          "package.json",
+          "second.ts"
+        ],
+        "stagedTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+        "sharedScratchDir": "/data/tmp/harness-tmp/cdktn-bundle-nqsxT9",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/output-hash",
+      "adapter": "buildkit-docker-daemon",
+      "status": "pass",
+      "observations": {
+        "bundlerCallsAtConstruction": 1,
+        "eagerBuild": true,
+        "artifactStillPresentAtStageTime": false,
+        "assetHash": "D291A7AA1E31550B0BD4F959B1F2E0CD",
+        "builtArtifactTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+        "stagedTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+        "stagingMatchesArtifact": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "stage/zip-packaging",
+      "adapter": "buildkit-docker-daemon",
+      "status": "pass",
+      "observations": {
+        "stageTargetIsFile": true,
+        "packagingExtension": ".zip",
+        "packagingProducesDirectory": false,
+        "packagingAcceptsDirectorySource": true,
+        "packagingOmitsDirectoryEntries": true,
+        "bundleArtifactIsDirectory": true,
+        "archiveBytes": 1259,
+        "archiveEntries": [
+          "BUILT",
+          "COPY.txt",
+          "Dockerfile.bundle",
+          "excludeme.txt",
+          "index.ts",
+          "lib/dep.ts",
+          "package.json",
+          "second.ts"
+        ],
+        "assetHash": "94C22CE195D86C1223E95988405A6713",
+        "bundlerBuilds": 1,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice",
+      "adapter": "buildkit-docker-daemon",
+      "status": "pass",
+      "observations": {
+        "assetHash": "D291A7AA1E31550B0BD4F959B1F2E0CD",
+        "bundlerCallsAfterFirstStage": 1,
+        "bundlerCallsAfterSecondStage": 2,
+        "rebuiltOnSecondStage": true,
+        "firstTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+        "secondTreeHash": "157476340ea7e83746aa833740af620e830f95c404ce231de13fc4d513a1c719",
+        "artifactsIdentical": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/stage-twice-nondeterministic",
+      "adapter": "buildkit-docker-daemon",
+      "status": "pass",
+      "observations": {
+        "assetHash": "3F8C739AD51B600E8AA85D2D53D6EB2B",
+        "bundlerCalls": 2,
+        "firstBuildInfo": "build-1-1789697041097-0.776088364174119",
+        "secondBuildInfo": "build-2-1789697041325-0.010088343317694703",
+        "artifactsIdentical": false,
+        "sameIdentityDifferentBytes": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "repeat/synth-twice",
+      "adapter": "buildkit-docker-daemon",
+      "status": "pass",
+      "observations": {
+        "assetHash": "D291A7AA1E31550B0BD4F959B1F2E0CD",
+        "declaredAssetPath": "assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD",
+        "bundlerCallsAfterFirstSynth": 1,
+        "bundlerCallsAfterSecondSynth": 2,
+        "rebuiltOnSecondSynth": true,
+        "emittedAssetFiles": [
+          "stacks/stack-synth/assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD/BUILT",
+          "stacks/stack-synth/assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD/COPY.txt",
+          "stacks/stack-synth/assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD/Dockerfile.bundle",
+          "stacks/stack-synth/assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD/excludeme.txt",
+          "stacks/stack-synth/assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD/index.ts",
+          "stacks/stack-synth/assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD/lib/dep.ts",
+          "stacks/stack-synth/assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD/package.json",
+          "stacks/stack-synth/assets/file/D291A7AA1E31550B0BD4F959B1F2E0CD/second.ts"
+        ],
+        "firstSynthOutdirHash": "d5c19e3aa9d3fd238091fb7323432b946cf036549cd85c5076fd5b8ff92ebe9a",
+        "secondSynthOutdirHash": "d5c19e3aa9d3fd238091fb7323432b946cf036549cd85c5076fd5b8ff92ebe9a",
+        "identicalAcrossSynths": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "asset/file-type-bundler",
+      "adapter": "buildkit-docker-daemon",
+      "status": "pass",
+      "observations": {
+        "rejectedAtConstruction": true,
+        "error": "TerraformAsset Staging was configured with a 'bundler' and file packaging (AssetType.FILE). A bundler produces a directory of output, which cannot be staged as a single file.",
+        "adapterProducesArchive": false,
+        "bundlerRanBeforeRejection": false,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "failure/bundler-throws",
+      "adapter": "buildkit-docker-daemon",
+      "status": "pass",
+      "observations": {
+        "errorPropagated": true,
+        "error": "harness: bundler failed after writing output",
+        "scratchDirsLeftInProcess": 1,
+        "scratchBytesLeftInProcess": 548,
+        "note": "registered scratch is reclaimed only by the process-exit sweep (see lifecycle/scratch-after-exit)",
+        "newScratchDirs": 1
+      }
+    },
+    {
+      "scenario": "identity/excluded-input-changes",
+      "adapter": "buildkit-docker-daemon",
+      "status": "pass",
+      "observations": {
+        "excludedFileShippedInArtifact": true,
+        "hashBefore": "107196972CB67509A10A1567AADA9C53",
+        "hashAfterExcludedChange": "107196972CB67509A10A1567AADA9C53",
+        "hashUnchangedDespiteExcludedChange": true,
+        "artifactChanged": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "determinism/two-fresh-builds",
+      "adapter": "buildkit-docker-daemon",
+      "status": "pass",
+      "observations": {
+        "first": "D291A7AA1E31550B0BD4F959B1F2E0CD",
+        "second": "D291A7AA1E31550B0BD4F959B1F2E0CD",
+        "assetHashesEqual": true,
+        "artifactTreesEqual": true,
+        "reproducible": true,
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "identity/bundler-key",
+      "adapter": "buildkit-docker-daemon",
+      "status": "pass",
+      "observations": {
+        "adapterBundlerKey": "buildx-docker::default::Dockerfile.bundle",
+        "node18Hash": "5CA2050187694F8744D231D3D85BCB0B",
+        "node20Hash": "31FACABD52D637DC8F19C36BBD2B6E64",
+        "identityFollowsBundlerKey": true,
+        "hashWithoutBundlerKey": "8708CC136F0CF6080154583C06944E2C",
+        "newScratchDirs": 0
+      }
+    },
+    {
+      "scenario": "large-output/never-staged",
+      "adapter": "buildkit-docker-daemon",
+      "status": "pass",
+      "observations": {
+        "assetHash": "B793D9A4598CA8A8F495468890057C86",
+        "scratchDirsCreated": 1,
+        "scratchBytes": 8389156,
+        "scratchDirs": [
+          {
+            "dir": "/data/tmp/harness-tmp/cdktn-bundle-KBlWmt",
+            "bytes": 8389156
+          }
+        ],
+        "newScratchDirs": 1
+      }
+    }
+  ]
+}

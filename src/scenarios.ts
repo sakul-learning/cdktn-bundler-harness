@@ -87,11 +87,16 @@ export function createFixture(name: string): Fixture {
     "COPY.txt": "copied-by-bundlers\n",
     "excludeme.txt": "version-1\n",
     // A tar-style single-file build, used by the archived-output scenario.
+    // Packaging stage: `type=local` exports the LAST stage's filesystem, so the
+    // build stage's output is copied into a scratch stage — otherwise a buildkit
+    // bundler would stage the entire alpine rootfs (including /etc/mtab).
     "Dockerfile.bundle": [
-      "FROM alpine",
+      "FROM alpine AS build",
       "RUN mkdir -p /out",
       "COPY . /out",
       "RUN printf 'built-in-buildkit\\n' > /out/BUILT",
+      "FROM scratch AS output",
+      "COPY --from=build /out/ /",
       "",
     ].join("\n"),
     // Second entry so a rolldown/esbuild build has a real module graph.

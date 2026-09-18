@@ -65,6 +65,14 @@ cd /data/repos/hermes-pr-reviewer/worktrees/cdk-terrain/open-constructs__cdk-ter
 pnpm exec nx build cdktn --skip-nx-cache
 ```
 
+## Adapters
+
+Nine bundler implementations, all ported from real code and all executed (108 scenarios):
+the eight listed in the provenance section below plus **`buildkit-docker-daemon`**
+(BuildKit embedded in the stock Docker daemon, driven through `buildx`'s `docker` driver
+rather than `buildctl`). `DX-REPORT.md` carries the authoritative table with upstream
+sources and results.
+
 ## Running
 
 ```bash
@@ -92,8 +100,18 @@ npm run harness -- --allow-docker --adapter=tcons-docker-bind --merge
 ```
 
 Outputs: `results.json` (machine readable) and `REPORT.md` (matrix + per-scenario
-observations). Both are generated; re-run to refresh. **`FINDINGS.md`** is the written
-analysis (what ported cleanly, what the interface cannot express, with the evidence).
+observations). Both are committed as evidence and regenerated on each run.
+
+Documents:
+
+- **`DX-REPORT.md`** — the implementation DX report: which capabilities of the known
+  bundlers could not be expressed through `IAssetBundler`, the workarounds each port
+  needed, what ported cleanly, and how the Docker daemon / buildx drivers relate to a
+  buildkit endpoint.
+- **`FINDINGS.md`** — behaviour analysis of the interface against cdktn's staging
+  pipeline (identity, `exclude`, scratch lifecycle, repeat staging).
+- **`repro/`** — the reviewer's standalone probes against the same PR head, with the
+  outputs they produced.
 
 Environment variables for the gated adapters:
 

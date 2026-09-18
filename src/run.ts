@@ -27,6 +27,7 @@ import { directoryAdapter, zipAdapter } from "./adapters/rolldown";
 import { bindMountAdapter, volumeCopyAdapter } from "./adapters/tc-docker";
 import { adapter as chainAdapter } from "./adapters/tc-local-docker";
 import { adapter as buildkitAdapter } from "./adapters/buildkit";
+import { buildxDockerDaemonAdapter } from "./adapters/buildkit-docker-driver";
 
 const args = process.argv.slice(2);
 const allowDocker = args.includes("--allow-docker");
@@ -44,6 +45,7 @@ const allAdapters: Adapter[] = [
   bindMountAdapter,
   volumeCopyAdapter,
   buildkitAdapter,
+  buildxDockerDaemonAdapter,
 ];
 const adapters: Adapter[] = allAdapters.filter(
   (adapter) => !onlyAdapter || adapter.meta.id === onlyAdapter,

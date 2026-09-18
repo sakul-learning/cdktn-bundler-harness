@@ -46,14 +46,23 @@ function runOnce(mode, signal) {
   const scratch = fs.existsSync(marker) ? fs.readFileSync(marker, "utf8").trim().split("\n")[0] : "<no-marker>";
 
   spawned.kill(signal);
+  // Liveness via kill(pid, 0): reading spawned.exitCode/signalCode requires the
+  // event loop, which this synchronous wait deliberately blocks.
   const deadline = Date.now();
-  while (spawned.exitCode === null && spawned.signalCode === null && Date.now() - deadline < 20_000) sleepSync(50);
-  const exited = spawned.exitCode !== null || spawned.signalCode !== null;
-  if (!exited) spawned.kill("SIGKILL");
+  let alive = true;
+  while (alive && Date.now() - deadline < 20_000) {
+    try {
+      process.kill(spawned.pid, 0);
+    } catch {
+      alive = false;
+    }
+    if (alive) sleepSync(50);
+  }
+  if (alive) spawned.kill("SIGKILL");
 
   return {
     mode: `${mode}+${signal}`,
-    exit: exited ? `code=${spawned.exitCode} signal=${spawned.signalCode}` : "killed-after-timeout",
+    exit: alive ? "still alive after 20s (SIGKILL sent)" : `terminated by ${signal}`,
     scratch,
     scratchSurvived: fs.existsSync(scratch),
   };

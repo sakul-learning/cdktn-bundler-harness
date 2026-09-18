@@ -5,9 +5,11 @@ Harness target: cdktn **PR #442** head `98b39e49f6dd6bb5cc94ca30302d5928e7c836bb
 `bundler` on `AssetStaging` / `TerraformAsset`). Evidence: `results.json` / `REPORT.md`
 from `npm run harness:all`, plus `scripts/lifecycle-probe.cjs`.
 
-Status: **7 of 8 adapters executed**. Docker (3) executed against a real daemon
-(29.5.3, overlayfs). Buildkit (1) written but **not executed** — `buildctl` could not
-be installed (see “Buildkit” below).
+Status: **8 of 8 adapters executed — 96 scenarios, all pass.** Docker (3) ran against a
+real daemon (29.5.3, overlayfs) with real container builds. Buildkit (1) ran against a
+real buildkitd endpoint (`moby/buildkit:v0.33.0`, `--addr tcp://0.0.0.0:1234`) driven by
+the mise-installed `buildctl` 0.33.0 client — see “Buildkit” below for how the tooling was
+obtained.
 
 ## Execution matrix
 
@@ -20,7 +22,7 @@ be installed (see “Buildkit” below).
 | `tcons-docker-bind` | 12 | 12 pass (real `docker run`, image `alpine`) |
 | `tcons-docker-volume` | 12 | 12 pass (helper container + 2 volumes + `docker cp`) |
 | `tcons-local-docker-chain` | 12 | 12 pass (local leg declines, Docker leg builds) |
-| `buildkit-local-output` | 12 | **skipped** — no `buildctl`, no `BUILDKIT_ADDR` |
+| `buildkit-local-output` | 12 | 12 pass (buildkitd over TCP, `buildctl` client) |
 
 ## What the interface absorbed cleanly
 
@@ -97,36 +99,50 @@ be installed (see “Buildkit” below).
    `TerraConstructsDockerBundler` is ~250 lines of argv construction that the interface
    neither sees nor constrains.
 
-## Buildkit (adapter written, not executed)
+## Buildkit (executed)
 
 TerraConstructs PR #165 is provider-side (`provider "buildkit"`, `buildkit_image`,
 `cruxstack/buildkit@0.0.1`) and contains no TypeScript, so the adapter ports the
 architecture: build against a buildkitd endpoint and take the artifact back through the
 client session (`--output type=local,dest=<outputDir>`), never the Docker Engine build
-API.
+API. `DockerAssetBuilder.BUILDKIT` never runs in the Node process; here the build is one
+`buildctl build --frontend dockerfile.v0` call.
 
-Blocked on tooling in this environment, in order tried:
+Tooling, in the order attempted (mise first, per project convention):
 
 1. `mise registry buildkit` → `tool not found in registry`.
-2. mise github backend (the documented escape hatch) —
-   `mise use -g "github:moby/buildkit[asset_pattern=buildkit-v*.linux-amd64.tar.gz,bin_path=bin/buildctl]"`
-   resolves `0.33.0` and starts downloading `buildkit-v0.33.0.linux-amd64.tar.gz`, but the
-   download did not complete (stalled; no `~/.local/share/mise/installs/buildkit`).
-3. Distro packages → `apt-cache policy buildkit` has **no candidate** on Ubuntu 24.04;
-   `docker-buildx` exists as an Ubuntu package but buildx is **already installed**
-   (`github.com/docker/buildx v0.34.1`) as a Docker CLI plugin, which is the practical
-   fallback: `docker buildx create --driver docker-container` hosts a buildkitd container
-   that performs the build.
+2. mise **github backend** — `mise use -g "github:moby/buildkit[asset_pattern=buildkit-v*.linux-amd64.tar.gz,bin_path=bin/buildctl]"`
+   → installs `0.33.0` to
+   `~/.local/share/mise/installs/github-moby-buildkit/0.33.0/{buildctl,buildkitd}`.
+   The first attempt looked stalled; the background run completed with exit 0 after
+   several minutes. That is the only route that worked.
+3. Distro packages → `apt-cache policy buildkit` has **no candidate** on Ubuntu 24.04
+   (buildx is packaged, and also already present as a CLI plugin at v0.34.1).
 
-To run it once a client or endpoint exists:
+Endpoint: the daemon is not usable as an unprivileged local process here (no
+`fuse-overlayfs`, and rootless mode needs a user namespace), so buildkitd runs from the
+official image with a TCP address, which is also how the “embedded or endpoint” choice in
+PR #165 is exercised:
 
 ```bash
-BUILDCTL=/path/to/buildctl BUILDKIT_ADDR=tcp://127.0.0.1:1234 \
-  npm run harness -- --allow-buildkit --adapter=buildkit-local-output
+docker run -d --name harness-buildkitd --privileged -p 127.0.0.1:1234:1234 \
+  moby/buildkit:v0.33.0 --addr tcp://0.0.0.0:1234
+
+BUILDCTL=~/.local/share/mise/installs/github-moby-buildkit/0.33.0/buildctl \
+BUILDKIT_ADDR=tcp://127.0.0.1:1234 \
+  npm run harness -- --allow-buildkit --adapter=buildkit-local-output --merge
 ```
 
-The adapter's gate reports exactly what is missing (`buildctl not found (set
-BUILDCTL=/path/to/buildctl); BUILDKIT_ADDR=<unset>`), so a skipped run is self-explaining.
+Result: **12/12 pass**, artifact returned through the client session into the staging
+scratch and staged by cdktn exactly like the host and Docker bundlers
+(`stagingMatchesArtifact=true` for `OUTPUT`, deferred build for `SOURCE`).
+
+One harness-side lesson worth keeping: `--output type=local` exports the **last stage's
+filesystem**, so a naive `FROM alpine … COPY . /out` build stages the whole alpine rootfs
+(including `/etc/mtab`, a dangling symlink that broke the harness's tree walk until the
+fixture Dockerfile gained a `FROM scratch AS output` packaging stage). That is a property
+of buildkit/local exporters, not of `IAssetBundler`, but any `@cdktn/bundler-buildkit`
+will have to make the same choice explicit.
 
 ## Review-relevant conclusions
 
