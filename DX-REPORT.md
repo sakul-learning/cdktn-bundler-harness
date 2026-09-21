@@ -69,13 +69,20 @@ ask for `AssetPackaging.ZIP`. Neither is the same shape as "stage this file": wi
 packaging the result is a zip whose single entry is `archive.zip`
 (`doubleArchived: "archive.zip"` in `results.json` for `rolldown-zip`).
 
-**Cost:** for a bundler whose identity choice was "the hash *is* the archive digest"
-(PR #402: `assetHash === sha256(archive.zip)`, which lets an artifact be compared directly
-against an S3-published zip or a Lambda package), that exact numeric equality is not
-reachable through the interface — computed hashes are 32-hex foldings of source+config, by
-design. What *is* preserved is the property that matters: any change in the archive moves
-the hash, through the config for `SOURCE` (given a deterministic bundler) or through the
-staged tree for `OUTPUT`. The residual friction is therefore **shape, not identity**:
+**Cost:** PR #402 deliberately computes one SHA-256 over the exact ZIP bytes and exposes
+that digest in two encodings for two consumers: hexadecimal `assetHash` names/stages the
+immutable artifact, while base64 `sourceCodeHash` is passed directly to Terraform AWS
+Lambda's `source_code_hash`. That gives the publisher/resource layer an artifact-level
+change detector and a direct integrity check: the value sent to Lambda is provably the
+digest of the file being deployed. A content-addressed S3 publisher could likewise use the
+hex digest as its object key and skip an upload when that object already exists, although
+PR #402 itself implements direct Lambda upload, not an S3 publisher.
+
+cdktn's normal source+`bundlerKey` identity still detects changes correctly for a
+deterministic build and is intentionally more skippable: it can decide that nothing
+changed without rebuilding the ZIP. It just is not, by itself, proof that a remote object's
+bytes equal the local archive; a publisher needing that property must also hash the output.
+The residual interface friction here is therefore primarily **shape, not identity**:
 `AssetType.FILE` + bundler is a hard reject, so `SINGLE_FILE`/`ARCHIVED` bundlers need
 `ZIP` packaging or a wrapper directory. **Suggestion:** let `bundle()` declare its artifact
 shape (a `producesArchive`/`outputType` member, or allow the packaging to consume a file),
